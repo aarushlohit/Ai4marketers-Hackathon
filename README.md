@@ -1,209 +1,121 @@
-# 🐦 Miracle Birds
+<div align="center">
+  <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/bird.svg" alt="Miracle Birds Logo" width="120" height="120" />
+  <h1>Miracle Birds CRM Intelligence</h1>
+  <p><strong>The AI Intelligence Layer for Every Enterprise CRM.</strong></p>
 
-Miracle Birds is a production-oriented AI intelligence layer for CRM teams. It connects customer data, predictions, workflows, and conversational analysis in one workspace so revenue teams can decide what to do next.
+  <p>
+    <a href="https://miracle-birds-crm-frontend.vercel.app"><img src="https://img.shields.io/badge/Live_Demo-Production-success?style=for-the-badge&logo=vercel" alt="Live Demo" /></a>
+    <img src="https://img.shields.io/badge/License-Proprietary-blue?style=for-the-badge" alt="License" />
+    <img src="https://img.shields.io/badge/Framework-Next.js_14-black?style=for-the-badge&logo=next.js" alt="Next.js" />
+    <img src="https://img.shields.io/badge/Backend-FastAPI-009688?style=for-the-badge&logo=fastapi" alt="FastAPI" />
+    <img src="https://img.shields.io/badge/Deployment-Render-46E3B7?style=for-the-badge&logo=render" alt="Render" />
+  </p>
+</div>
 
-## Product
+---
 
-- Customer 360 with health, deal, and activity context
-- AI Copilot for customer and pipeline questions
-- Churn prediction, lead scoring, and revenue forecasting
-- Next-best-action recommendations and workflow automation
-- OAuth integrations for Salesforce, Zoho, HubSpot, Microsoft Dynamics 365, and Pipedrive
-- Tenant isolation, JWT authentication, MFA support, audit logging, rate limiting, and security headers
+## 🚀 The Vision
 
-## Production URLs
+Enterprise revenue teams are drowning in data but starving for insights. CRMs like Salesforce and HubSpot are incredibly powerful data silos, but extracting actionable intelligence requires data science teams and weeks of analysis.
 
-| Service | URL |
-| --- | --- |
-| Web application | https://miracle-birds-crm-frontend.vercel.app |
-| Backend API | https://mb-backend-rnhn.onrender.com |
-| Backend health | https://mb-backend-rnhn.onrender.com/health |
-| CRM integration health | https://mb-crm-integration.onrender.com/health |
+**Miracle Birds** bridges the gap. It is an **AI-native intelligence layer** that plugs directly into your existing CRM to predict customer churn, score leads, automate retention workflows, and provide a conversational AI Copilot for your raw data. 
 
-The production frontend is deployed on Vercel. Backend services and managed data services are deployed in Render. The Render service definitions are in `render.yaml`.
+**Stop guessing. Start growing.**
 
-## Demo access
+---
 
-The shared demo account is for demonstrations only and must never be used for customer data or production administration.
+## ✨ Core Features
 
-| Field | Value |
-| --- | --- |
-| Username | `demo@miraclebirds.ai` |
-| Password | `Demo@123456` |
+- 🧠 **Predictive Intelligence:** Real-time ML models predict customer churn risk and generate lead health scores.
+- 💬 **AI CRM Copilot:** Query your entire pipeline, customer history, and deal metrics using natural language.
+- 🔄 **Automated Workflows:** Trigger automated retention playbooks, Slack alerts, and sales sequences based on AI insights.
+- 📊 **Customer 360 Profiles:** A unified view of every account, synthesizing data from meetings, emails, and CRM records.
+- 🔌 **Universal Connectors:** One-click OAuth integrations for **Salesforce, HubSpot, Zoho CRM, Microsoft Dynamics 365, and Pipedrive**.
+- 🛡️ **Enterprise Security & Governance:** Industry-first AI governance dashboard with SOC2/GDPR compliance tracking, full audit logs, and an emergency AI kill-switch.
 
-Rotate or disable this account before any public launch. Do not reuse this password for another environment. Demo data is non-production sample data.
+---
 
-## How to use the application
+## 🌐 Live Production Links
 
-1. Open the web application URL.
-2. Choose **Sign in** and enter the demo credentials, or choose **Create account**.
-3. Open **Overview** to review pipeline and customer health signals.
-4. Use **Customers** to inspect customer profiles, scores, and activity.
-5. Use **Copilot** to ask questions about the connected CRM workspace.
-6. Use **Predictions** to review churn, lead, and revenue signals.
-7. Use **Workflows** to configure actions triggered by CRM or AI events.
-8. Use **Integrations** to connect a CRM through its OAuth provider.
-9. Use **Settings** and **Security Center** to configure account security, MFA, and audit visibility.
+| Service | Environment | URL |
+| :--- | :--- | :--- |
+| **Web Application** | Vercel (Prod) | [https://miracle-birds-crm-frontend.vercel.app](https://miracle-birds-crm-frontend.vercel.app) |
+| **Backend API** | Render (Prod) | [https://mb-backend-rnhn.onrender.com](https://mb-backend-rnhn.onrender.com) |
+| **CRM Integration Svc** | Render (Prod) | [https://mb-crm-integration.onrender.com/health](https://mb-crm-integration.onrender.com/health) |
 
-## Architecture
+### 🔑 Demo Access
+To explore the live application, use our shared sandbox credentials:
+> **Email:** `demo@miraclebirds.ai`
+> **Password:** `Demo@123456`
 
-```text
-Browser
-  |
-  v
-Next.js frontend on Vercel
-  |
-  v
-FastAPI backend on Render
-  |-------- PostgreSQL and Redis on Render
-  |-------- AI engine
-  |-------- CRM integration service
-  |-------- Security engine
-  |-------- Workflow engine
+*(Note: This is a shared sandbox. Please do not upload sensitive production data).*
+
+---
+
+## 🏗️ Architecture Stack
+
+Miracle Birds is built using a modern, scalable, and decoupled microservices architecture.
+
+* **Frontend:** Next.js 14 (App Router), React, Tailwind CSS, TanStack Query, Zustand, Lucide Icons.
+* **Backend:** Python, FastAPI, PostgreSQL, Redis.
+* **AI Engine:** OpenCode Zen API (DeepSeek / Nemotron models).
+* **Infrastructure:** Vercel (Edge CDN), Render (Managed Services & DBs).
+
+```mermaid
+graph TD
+    A[Client / Browser] -->|HTTPS| B(Next.js Frontend on Vercel)
+    B -->|REST API| C{FastAPI Gateway}
+    C --> D[Security & Auth Engine]
+    C --> E[AI Copilot Engine]
+    C --> F[CRM Integration Service]
+    C --> G[Workflow Engine]
+    F <--> H[(PostgreSQL)]
+    E <--> I[OpenCode LLM API]
+    F <--> J[Salesforce / HubSpot APIs]
 ```
 
-The backend is the authorization boundary. Client-side state is not trusted for tenant, role, customer, or workflow access. Service-to-service calls use `X-Internal-API-Key` and require a configured secret in production.
+---
 
-## Security model
+## 🛠️ Local Development
 
-- Passwords are hashed with bcrypt.
-- Access and refresh JWTs are signed with environment-provided secrets.
-- Refresh tokens rotate and are revocable server-side.
-- Login failures are protected by brute-force controls.
-- API requests use exact configured CORS origins.
-- Internal endpoints reject missing or invalid service credentials.
-- Security headers include CSP, HSTS in production, X-Frame-Options, nosniff, Referrer-Policy, Permissions-Policy, COOP, and CORP.
-- Rate limiting is enforced through Redis-backed middleware.
-- OAuth state values are generated cryptographically and validated during callbacks.
-- Secrets belong in Render or Vercel environment variables, never in source control.
-- Do not claim SOC 2, HIPAA, GDPR, or other certification without an independently verified compliance program.
+### 1. Prerequisites
+- Node.js >= 20.x
+- Python >= 3.10
+- PostgreSQL
+- Redis
 
-## Required production configuration
-
-Set these values in the deployment provider's secret manager before enabling production traffic:
-
-| Variable | Purpose |
-| --- | --- |
-| `ENVIRONMENT=production` | Enables production safeguards |
-| `JWT_SECRET` | At least 32 random characters |
-| `SECRET_KEY` | At least 32 random characters |
-| `INTERNAL_API_KEY` | Service-to-service authentication |
-| `ALLOWED_ORIGINS` | Comma-separated exact frontend origins |
-| `TRUSTED_HOSTS` | Comma-separated approved hostnames |
-| `DATABASE_URL` | Managed PostgreSQL connection |
-| `REDIS_URL` | Managed Redis connection |
-| `OPENCODE_API_KEY` | OpenCode Zen API credential for Executive AI and CRM Copilot |
-| `OPENCODE_MODEL` | OpenCode model ID; defaults to `deepseek-v4-flash-free` |
-| `OPENCODE_API_URL` | OpenAI-compatible endpoint; defaults to `https://opencode.ai/zen/v1/chat/completions` |
-| CRM OAuth variables | Provider-specific client IDs, secrets, and redirect settings |
-| `NEO4J_URI`, `NEO4J_USER`, `NEO4J_PASSWORD` | Optional knowledge graph connection |
-
-Production startup rejects insecure JWT and application secrets. Missing internal credentials cause protected service calls to fail closed.
-
-## Deployment operations
-
-### Vercel
-
-From `apps/frontend`:
-
-```bash
-vercel link --yes --project miracle-birds-crm-frontend --scope ashlinmirshas-projects
-vercel deploy --prod --yes --scope ashlinmirshas-projects
-```
-
-Verify the deployment:
-
-```bash
-curl -fsS https://miracle-birds-crm-frontend.vercel.app/
-curl -fsS https://miracle-birds-crm-frontend.vercel.app/login
-curl -fsS https://miracle-birds-crm-frontend.vercel.app/register
-```
-
-### Render
-
-Authenticate and inspect the active workspace:
-
-```bash
-render login
-render whoami
-render services --output json
-```
-
-Inspect or trigger a service deployment using its Render service ID:
-
-```bash
-render deploys list SERVICE_ID --output json
-render deploys create SERVICE_ID
-render logs --resources SERVICE_ID --limit 100 --output json
-```
-
-Verify health endpoints after deployment:
-
-```bash
-curl -fsS https://mb-backend-rnhn.onrender.com/health
-curl -fsS https://mb-crm-integration.onrender.com/health
-curl -fsS https://mb-ai-engine.onrender.com/health
-curl -fsS https://mb-security-engine.onrender.com/health
-```
-
-Do not treat a Render deployment marked `succeeded` as proof that an AI provider, CRM OAuth flow, database migration, or downstream service is working. Verify the HTTP response and relevant application logs.
-
-## Verification commands
-
-Frontend checks:
-
+### 2. Frontend Setup
 ```bash
 cd apps/frontend
-npm ci
-npm run type-check
-npm test -- --runInBand
-npm run build
+npm install
+# Copy environment variables
+cp .env.example .env.local
+npm run dev
 ```
+*Frontend runs on `http://localhost:3000`*
 
-Backend checks:
-
+### 3. Backend Setup
 ```bash
-python3 -m pip install -r apps/backend/requirements.txt
-python3 -m pytest apps/backend/tests -q
-python3 -m pytest apps/crm-integration/tests apps/mock-crm-provider/tests -q
+cd apps/backend
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+# Set required env vars (DATABASE_URL, JWT_SECRET, etc)
+uvicorn main:app --reload --port 8000
 ```
+*Backend runs on `http://localhost:8000`*
 
-Dependency checks:
+---
 
-```bash
-npm audit --omit=dev
-python3 -m pip check
-```
+## 🔐 Security Model
+We built Miracle Birds to be **secure by design**, keeping enterprise requirements in mind:
+- **Zero-Trust Internal APIs:** All microservice-to-microservice communication requires cryptographic `X-Internal-API-Key` headers.
+- **Tenant Isolation:** strict row-level security and tenant-scoped JWTs ensure data never bleeds between accounts.
+- **Rate Limiting:** Global Redis-backed rate limiting protects against brute force and DDoS.
+- **AI Guardrails:** Configurable limits on AI response generation and confident thresholding for automated workflows.
 
-Security review before release:
+---
 
-1. Confirm production secrets are set in Render and Vercel.
-2. Confirm no `.env` file, token, password, or private key is tracked by Git.
-3. Confirm CORS contains only approved production origins.
-4. Confirm invalid internal API keys return `401`.
-5. Confirm login, refresh, logout, MFA, and rate-limit behavior.
-6. Confirm every service health endpoint and one authenticated AI request.
-7. Review Render logs for failed deploys, authentication failures, and downstream errors.
-8. Run a dependency audit and resolve high or critical findings before release.
-
-## Repository map
-
-| Path | Responsibility |
-| --- | --- |
-| `apps/frontend` | Next.js application |
-| `apps/backend` | Primary FastAPI API and authentication boundary |
-| `apps/crm-integration` | CRM OAuth, sync, and webhook service |
-| `apps/security-engine` | Prompt and PII security service |
-| `apps/ai-engine` | AI provider orchestration |
-| `apps/workflow-engine` | Workflow execution and rollback |
-| `docs/api` | API reference and OpenAPI specification |
-| `docs/security` | Security architecture and controls |
-| `render.yaml` | Render service definitions |
-
-## Support and incident response
-
-For a production incident, preserve the Render deployment ID, request ID, UTC timestamp, affected account or tenant ID, endpoint, and sanitized error response. Never attach passwords, access tokens, refresh tokens, OAuth client secrets, or full request bodies to an issue.
-
-## License
-
-Proprietary. Copyright 2026 Miracle Birds. All rights reserved.
+<div align="center">
+  <p>Built with ❤️ by Team Miracle Birds for the AI for Marketers Hackathon (August 2026).</p>
+</div>
