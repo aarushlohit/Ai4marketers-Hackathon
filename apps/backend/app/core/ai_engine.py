@@ -241,13 +241,14 @@ async def call_llm(
     fallback_fn=None,
     max_tokens: int = 600,
     temperature: float = 0.6,
+    model: str | None = None,
 ) -> str:
     """
     Call DeepSeek V4 Flash Free via opencode.ai.
     If the API fails, calls fallback_fn(user_message) if provided.
     """
     payload = {
-        "model": FREE_MODEL,
+        "model": model or FREE_MODEL,
         "messages": [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_message},
@@ -256,15 +257,18 @@ async def call_llm(
         "temperature": temperature,
     }
     headers = {
-        "Authorization": "Bearer dummy_token",
         "Content-Type": "application/json",
+        "User-Agent": "MiracleBirds/1.0",
     }
-    async with httpx.AsyncClient(timeout=30.0) as client:
+    async with httpx.AsyncClient(timeout=45.0) as client:
         try:
             r = await client.post(OPENCODE_API_URL, json=payload, headers=headers)
             r.raise_for_status()
             data = r.json()
-            content = data["choices"][0]["message"]["content"].strip()
+            msg_obj = data["choices"][0]["message"]
+            content = (msg_obj.get("content") or "").strip()
+            if not content:
+                content = (msg_obj.get("reasoning_content") or "").strip()
             if content:
                 return content
         except Exception as e:
@@ -279,6 +283,7 @@ async def crm_chat(
     user_message: str,
     tenant_id,
     db: AsyncSession,
+    model: str | None = None,
 ) -> str:
     """
     Full CRM-guarded AI chat pipeline:
@@ -356,7 +361,7 @@ async def crm_chat(
                 "Ask me about specific customers, churn risk, leads, or revenue for details."
             )
 
-    return await call_llm(system_prompt, user_message, fallback_fn=smart_fallback)
+    return await call_llm(system_prompt, user_message, fallback_fn=smart_fallback, model=model)
 
 
 async def analyze_meeting_transcript(

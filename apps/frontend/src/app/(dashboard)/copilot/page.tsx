@@ -10,6 +10,16 @@ interface Message {
   timestamp: Date;
 }
 
+const MODELS = [
+  { id: 'big-pickle', label: 'Big Pickle' },
+  { id: 'mimo-v2.5-free', label: 'MiMo V2.5' },
+  { id: 'hy3-free', label: 'Hy3' },
+  { id: 'laguna-s-2.1-free', label: 'Laguna S 2.1' },
+  { id: 'nemotron-3-ultra-free', label: 'Nemotron 3 Ultra' },
+  { id: 'nemotron-3.5-lightning-free', label: 'Nemotron 3.5 Lightning' },
+  { id: 'deepseek-v4-flash-free', label: 'DeepSeek V4 Flash' },
+] as const;
+
 const STARTER_PROMPTS = [
   { label: "Which customers need attention today?", icon: "🔔" },
   { label: "Show customers likely to churn.", icon: "📉" },
@@ -45,6 +55,7 @@ export default function CopilotPage() {
     },
   ]);
   const [input, setInput] = useState("");
+  const [selectedModel, setSelectedModel] = useState('deepseek-v4-flash-free');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -66,7 +77,7 @@ export default function CopilotPage() {
     setIsLoading(true);
 
     try {
-      const res = await apiClient.post("/copilot/chat", { message: content.trim() });
+      const res = await apiClient.post("/copilot/chat", { message: content.trim(), model: selectedModel });
       setMessages((prev) => [
         ...prev,
         { role: "assistant", content: res.data.response, timestamp: new Date() },
@@ -124,6 +135,29 @@ export default function CopilotPage() {
           </div>
         </div>
         <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 mr-2">
+            <label className="text-[10px] text-slate-500 uppercase tracking-wider font-semibold">Model:</label>
+            <select
+              value={selectedModel}
+              onChange={(e) => {
+                setSelectedModel(e.target.value);
+                setMessages([
+                  {
+                    role: "assistant",
+                    content: `Switched to model: ${MODELS.find(m => m.id === e.target.value)?.label}. How can I help you?`,
+                    timestamp: new Date(),
+                  },
+                ]);
+              }}
+              className="rounded-lg border border-slate-200 dark:border-dark-border bg-white dark:bg-dark-surface text-xs px-2 py-1 text-slate-700 dark:text-white focus:outline-none"
+            >
+              {MODELS.map((m) => (
+                <option key={m.id} value={m.id}>
+                  {m.label}
+                </option>
+              ))}
+            </select>
+          </div>
           <span className="flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700 dark:border-emerald-800/40 dark:bg-emerald-950/20 dark:text-emerald-400">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
             Live

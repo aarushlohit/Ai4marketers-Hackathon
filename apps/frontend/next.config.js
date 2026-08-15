@@ -40,7 +40,9 @@ const nextConfig = {
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: https:",
               "font-src 'self'",
-              `connect-src ${connectSrc}`,
+              `connect-src ${connectSrc} https://opencode.ai`,
+              "font-src 'self' https://fonts.gstatic.com",
+              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
             ].join("; "),
           },
         ],
@@ -48,16 +50,7 @@ const nextConfig = {
     ];
   },
 
-  // Server-side redirect: root → overview (avoids 404 flash from client-side redirect)
-  async redirects() {
-    return [
-      {
-        source: "/",
-        destination: "/overview",
-        permanent: false,
-      },
-    ];
-  },
+  // No root redirect — landing page at / is served directly
 
   // Proxy API calls to Docker backend in dev
   async rewrites() {

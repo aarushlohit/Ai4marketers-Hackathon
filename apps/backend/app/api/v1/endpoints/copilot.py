@@ -17,6 +17,7 @@ class ChatRequest(BaseModel):
     message: str
     conversation_id: str | None = None
     context: dict | None = None
+    model: str | None = None
 
 
 @router.post("/chat")
@@ -35,11 +36,12 @@ async def chat(
         user_message=payload.message,
         tenant_id=user.tenant_id,
         db=db,
+        model=payload.model,
     )
     return {
         "response": response,
         "conversation_id": payload.conversation_id or "default",
-        "model": FREE_MODEL,
+        "model": payload.model or FREE_MODEL,
     }
 
 
