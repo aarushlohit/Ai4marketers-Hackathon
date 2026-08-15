@@ -1,5 +1,6 @@
 """Executive Intelligence endpoints — DB-backed with free AI model and CRM guardrails."""
 
+import asyncio
 from typing import Annotated
 
 import httpx
@@ -68,13 +69,22 @@ async def get_executive_briefing(
             f"(3) Action all {ctx['pending_recommendations']} pending AI recommendations in the platform."
         )
 
-    briefing = await call_llm(
-        system_prompt=system_prompt,
-        user_message=context_text,
-        fallback_fn=fallback,
-        max_tokens=700,
-        temperature=0.5,
-    )
+    # Metrics should not be held hostage by an optional external AI provider.
+    # The fallback is complete and data-backed, so use it when generation does
+    # not finish promptly and still return the dashboard's live KPIs.
+    try:
+        briefing = await asyncio.wait_for(
+            call_llm(
+                system_prompt=system_prompt,
+                user_message=context_text,
+                fallback_fn=fallback,
+                max_tokens=700,
+                temperature=0.5,
+            ),
+            timeout=5.0,
+        )
+    except (asyncio.TimeoutError, httpx.HTTPError):
+        briefing = fallback("AI briefing timed out")
 
     return {
         "briefing": briefing,

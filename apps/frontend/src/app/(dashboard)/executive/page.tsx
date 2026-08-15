@@ -101,9 +101,14 @@ export default function ExecutiveDashboardPage() {
   const [askError, setAskError] = useState<string | null>(null);
 
   // Fetch briefing data
-  const { data: briefingData, isLoading: isBriefingLoading } = useQuery({
+  const {
+    data: briefingData,
+    isLoading: isBriefingLoading,
+    isError: isBriefingError,
+  } = useQuery({
     queryKey: ["executive-briefing"],
     queryFn: () => apiClient.get("/executive/briefing").then((r) => r.data),
+    retry: 1,
   });
 
   const askMutation = useMutation({
@@ -132,7 +137,7 @@ export default function ExecutiveDashboardPage() {
   };
 
   const metrics = briefingData?.metrics ?? {};
-  const briefingText = briefingData?.briefing ?? "Loading executive summary...";
+  const briefingText = briefingData?.briefing ?? "";
 
   return (
     <div className="space-y-6">
@@ -221,6 +226,10 @@ export default function ExecutiveDashboardPage() {
                 <div className="h-4 w-5/6 animate-pulse rounded bg-slate-100 dark:bg-dark-surface" />
                 <div className="h-4 w-4/5 animate-pulse rounded bg-slate-100 dark:bg-dark-surface" />
               </div>
+            ) : isBriefingError ? (
+              <p role="alert" className="text-sm text-slate-500 dark:text-slate-400">
+                Executive metrics are temporarily unavailable. Please refresh to try again.
+              </p>
             ) : (
               renderBriefingText(briefingText)
             )}
