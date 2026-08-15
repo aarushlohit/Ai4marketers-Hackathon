@@ -45,8 +45,8 @@ Enterprise revenue teams are drowning in data but starving for insights. CRMs li
 
 ### 🔑 Demo Access
 To explore the live application, use our shared sandbox credentials:
-> **Email:** `demo@miraclebirds.ai`
-> **Password:** `Demo@123456`
+> **Email:** `qy45gkdg5@mozmail.com`
+> **Password:** `*L39RDW=P8EVbn>`
 
 *(Note: This is a shared sandbox. Please do not upload sensitive production data).*
 
