@@ -8,7 +8,6 @@ import {
   Check,
   ChevronDown,
   CircleDollarSign,
-  Cloud,
   Layers3,
   Menu,
   ShieldCheck,
@@ -25,7 +24,7 @@ const features = [
 ];
 
 function Logo() {
-  return <Link href="/" className="flex items-center gap-2.5" aria-label="Miracle Birds home"><span className="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-500 text-white shadow-lg shadow-sky-200"><Cloud size={19} strokeWidth={2.5} /></span><span className="text-[17px] font-semibold tracking-[-0.02em] text-slate-950">Miracle Birds</span></Link>;
+  return <Link href="/" className="flex items-center gap-2.5" aria-label="Miracle Birds home"><span className="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-500 text-lg shadow-lg shadow-sky-200">🐦</span><span className="text-[17px] font-semibold tracking-[-0.02em] text-slate-950">Miracle Birds</span></Link>;
 }
 
 function ProductPreview() {

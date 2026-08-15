@@ -93,7 +93,7 @@ export default function RegisterPage() {
         <div className="pointer-events-none absolute -right-32 -top-32 h-96 w-96 rounded-full bg-sky-200/60 blur-3xl" />
         <div>
           <div className="relative flex items-center gap-3 text-3xl font-semibold tracking-[-0.05em] text-slate-950">
-            <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-500 text-lg font-bold text-white shadow-lg shadow-sky-200">M</span> Miracle Birds
+            <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-500 text-xl shadow-lg shadow-sky-200">🐦</span> Miracle Birds
           </div>
           <p className="relative mb-12 mt-5 max-w-sm text-xl font-medium leading-8 text-slate-600">
             Build a clearer, more connected customer workflow.
