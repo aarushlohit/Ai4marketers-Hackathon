@@ -23,6 +23,7 @@ from app.api.v1.endpoints import (
     security,
     governance,
     learning,
+    settings,
 )
 
 api_router = APIRouter()
@@ -47,4 +48,4 @@ api_router.include_router(compliance.router,   prefix="/compliance",   tags=["Co
 api_router.include_router(security.router,     prefix="/security",     tags=["Security Center"])
 api_router.include_router(governance.router,   prefix="/governance",   tags=["AI Governance"])
 api_router.include_router(learning.router,     prefix="/learning",     tags=["Reinforcement Learning"])
-
+api_router.include_router(settings.router,     prefix="/settings",     tags=["Settings"])

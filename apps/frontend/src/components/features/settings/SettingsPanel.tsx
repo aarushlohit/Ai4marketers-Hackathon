@@ -7,7 +7,7 @@ import { useAuthStore } from "@/stores/auth.store";
 import { apiClient } from "@/lib/api/client";
 import { UserAvatar } from "@/components/ui/user-avatar";
 
-import { Shield, CheckCircle } from "lucide-react";
+import { Shield, CheckCircle, AlertTriangle } from "lucide-react";
 
 const tabs = ["Profile", "Security", "Notifications"] as const;
 type Tab = (typeof tabs)[number];
@@ -66,6 +66,17 @@ export function SettingsPanel() {
       apiClient.put("/users/me", data).then((r) => r.data),
   });
 
+  const resetMutation = useMutation({
+    mutationFn: () => apiClient.delete("/settings/reset-data"),
+    onSuccess: () => window.alert("All CRM data and connected providers were reset."),
+  });
+
+  const handleReset = () => {
+    if (window.confirm("Reset everything? This permanently deletes your CRM customers, meetings, workflows, recommendations, feedback, and all connected CRM providers. Your account will remain.")) {
+      resetMutation.mutate();
+    }
+  };
+
   if (!mounted) return null;
 
   return (
@@ -111,6 +122,20 @@ export function SettingsPanel() {
                 value={user?.email ?? ""}
                 className="mt-1 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-500 dark:border-dark-border dark:bg-dark-bg/50 dark:text-dark-muted"
               />
+            </div>
+
+            <div className="rounded-xl border border-red-200 bg-red-50 p-4 dark:border-red-900/60 dark:bg-red-950/20">
+              <div className="flex items-start gap-3">
+                <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-red-600" />
+                <div className="space-y-2">
+                  <p className="text-sm font-semibold text-red-800 dark:text-red-300">Reset all workspace data</p>
+                  <p className="text-xs leading-5 text-red-700 dark:text-red-400">Permanently removes CRM records and disconnects every connected provider. Your login account remains.</p>
+                  <button type="button" onClick={handleReset} disabled={resetMutation.isPending} className="rounded-lg bg-red-600 px-3 py-2 text-xs font-semibold text-white hover:bg-red-700 disabled:opacity-50">
+                    {resetMutation.isPending ? "Resetting…" : "Reset everything"}
+                  </button>
+                  {resetMutation.isError && <p className="text-xs text-red-700">Reset failed. Please try again.</p>}
+                </div>
+              </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>

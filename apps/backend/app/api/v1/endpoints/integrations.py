@@ -104,6 +104,11 @@ async def delete_connection(
     await _crm_request("DELETE", f"/connections/{connection_id}",
                        params={"tenant_id": str(user.tenant_id)})
 
+@router.delete("/connections", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_all_connections(user: Annotated[CurrentUser, Depends(get_current_user)]):
+    """Remove every CRM connection owned by the current tenant."""
+    await _crm_request("DELETE", "/connections", params={"tenant_id": str(user.tenant_id)})
+
 
 @router.post("/sync/{connection_id}/start", status_code=status.HTTP_202_ACCEPTED)
 async def start_sync(

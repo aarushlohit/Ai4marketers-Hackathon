@@ -278,3 +278,12 @@ async def delete_connection(
         connection = _connections.get(connection_id)
         if connection and connection.get("tenant_id") == tenant_id:
             _connections.pop(connection_id, None)
+
+@router.delete("/connections", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_all_connections(tenant_id: str = Query(...), db: AsyncSession = Depends(get_db)):
+    """Delete all persisted and in-memory connections for a tenant."""
+    await db.execute(text("DELETE FROM integrations.crm_connections WHERE tenant_id = :tenant_id"), {"tenant_id": UUID(tenant_id)})
+    await db.commit()
+    for connection_id, connection in list(_connections.items()):
+        if connection.get("tenant_id") == tenant_id:
+            _connections.pop(connection_id, None)
