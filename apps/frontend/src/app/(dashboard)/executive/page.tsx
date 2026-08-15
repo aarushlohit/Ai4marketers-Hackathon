@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import axios from "axios";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api/client";
 import {
@@ -14,6 +15,14 @@ import {
   Send,
   FileText,
 } from "lucide-react";
+
+function axiosErrorMessage(error: unknown): string {
+  if (axios.isAxiosError(error)) {
+    const detail = error.response?.data?.detail;
+    if (typeof detail === "string" && detail.length < 180) return detail;
+  }
+  return "The AI assistant is temporarily unavailable. Your CRM data is safe; please try again.";
+}
 
 function renderBriefingText(text: string) {
   if (!text) return null;
@@ -89,6 +98,7 @@ export default function ExecutiveDashboardPage() {
   const [question, setQuestion] = useState("");
   const [answers, setAnswers] = useState<Array<{ q: string; a: string }>>([]);
   const [isAsking, setIsAsking] = useState(false);
+  const [askError, setAskError] = useState<string | null>(null);
 
   // Fetch briefing data
   const { data: briefingData, isLoading: isBriefingLoading } = useQuery({
@@ -99,21 +109,26 @@ export default function ExecutiveDashboardPage() {
   const askMutation = useMutation({
     mutationFn: (payload: { question: string }) =>
       apiClient.post("/executive/ask", payload).then((r) => r.data),
-    onSuccess: (data) => {
-      setAnswers([...answers, { q: question, a: data.answer }]);
+    onSuccess: (data, variables) => {
+      setAnswers((previous) => [...previous, { q: variables.question, a: data.answer }]);
       setQuestion("");
+      setAskError(null);
       setIsAsking(false);
     },
-    onError: () => {
+    onError: (error) => {
+      const message = axiosErrorMessage(error);
+      setAskError(message);
       setIsAsking(false);
     },
   });
 
   const handleAsk = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!question) return;
+    const submittedQuestion = question.trim();
+    if (!submittedQuestion) return;
     setIsAsking(true);
-    askMutation.mutate({ question });
+    setAskError(null);
+    askMutation.mutate({ question: submittedQuestion });
   };
 
   const metrics = briefingData?.metrics ?? {};
@@ -271,6 +286,11 @@ export default function ExecutiveDashboardPage() {
 
           {/* Input form */}
           <div className="border-t border-slate-200 dark:border-dark-border px-4 py-3">
+            {askError && (
+              <p role="alert" className="mb-2 rounded-lg bg-rose-50 px-3 py-2 text-xs text-rose-700 dark:bg-rose-950/30 dark:text-rose-300">
+                {askError}
+              </p>
+            )}
             <form onSubmit={handleAsk} className="flex items-center gap-2">
               <input
                 type="text"
@@ -297,4 +317,3 @@ export default function ExecutiveDashboardPage() {
     </div>
   );
 }
-

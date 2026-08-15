@@ -260,7 +260,9 @@ async def call_llm(
         "Content-Type": "application/json",
         "User-Agent": "MiracleBirds/1.0",
     }
-    async with httpx.AsyncClient(timeout=45.0) as client:
+    # Keep the executive UI responsive. The deterministic CRM fallback is
+    # returned when the external model is slow or unavailable.
+    async with httpx.AsyncClient(timeout=12.0) as client:
         try:
             r = await client.post(OPENCODE_API_URL, json=payload, headers=headers)
             r.raise_for_status()
