@@ -2,16 +2,6 @@
 
 import { memo, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  Cell,
-} from "recharts";
 import { apiClient } from "@/lib/api/client";
 
 interface PipelineStage {
@@ -66,45 +56,18 @@ export const SalesPipelineChart = memo(function SalesPipelineChart() {
   if (!hasData) return <PipelineEmpty />;
 
   return (
-    <div className="h-[250px] min-w-0 w-full">
-      <ResponsiveContainer width="100%" height="100%" minWidth={0}>
-        <BarChart
-          data={stages}
-          margin={{ top: 8, right: 8, left: -8, bottom: 0 }}
-        >
-          <CartesianGrid
-            strokeDasharray="3 3"
-            stroke="#e2e8f0"
-            vertical={false}
-          />
-          <XAxis
-            dataKey="stage"
-            tick={{ fontSize: 12, fill: "#64748b" }}
-            axisLine={false}
-            tickLine={false}
-          />
-          <YAxis
-            tick={{ fontSize: 12, fill: "#64748b" }}
-            axisLine={false}
-            tickLine={false}
-            allowDecimals={false}
-          />
-          <Tooltip
-            cursor={{ fill: "rgba(148, 163, 184, 0.12)" }}
-            contentStyle={{
-              borderRadius: 12,
-              border: "1px solid #e2e8f0",
-              fontSize: 13,
-            }}
-            formatter={(value: number) => [value, "Accounts"]}
-          />
-          <Bar dataKey="count" radius={[8, 8, 0, 0]} maxBarSize={48}>
-            {stages.map((entry) => (
-              <Cell key={entry.stage} fill={entry.color} />
-            ))}
-          </Bar>
-        </BarChart>
-      </ResponsiveContainer>
+    <div className="grid h-[250px] min-w-0 w-full grid-cols-5 items-end gap-3 px-2 pb-1 pt-4">
+      {stages.map((entry) => {
+        const maxCount = Math.max(...stages.map((stage) => stage.count), 1);
+        const height = entry.count === 0 ? 4 : Math.max((entry.count / maxCount) * 190, 12);
+        return (
+          <div key={entry.stage} className="flex h-full min-w-0 flex-col items-center justify-end gap-2" title={`${entry.stage}: ${entry.count} accounts`}>
+            <span className="text-xs font-semibold text-slate-500">{entry.count}</span>
+            <div className="w-full max-w-12 rounded-t-lg transition-all" style={{ height, backgroundColor: entry.color }} />
+            <span className="w-full truncate text-center text-[11px] text-slate-500">{entry.stage}</span>
+          </div>
+        );
+      })}
     </div>
   );
 });
