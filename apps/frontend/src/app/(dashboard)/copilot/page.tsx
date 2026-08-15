@@ -124,8 +124,8 @@ export default function CopilotPage() {
       {/* Header */}
       <div className="flex shrink-0 items-center justify-between border-b border-slate-200 bg-white px-6 py-4 dark:border-dark-border dark:bg-dark-bg/80">
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-900 dark:bg-white">
-            <Sparkles className="h-5 w-5 text-white dark:text-slate-900" />
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-sky-500 text-white dark:bg-sky-500 dark:text-white">
+            <Sparkles className="h-5 w-5 text-white" />
           </div>
           <div>
             <h1 className="text-base font-bold text-slate-900 dark:text-white">AI CRM Copilot</h1>
@@ -191,7 +191,7 @@ export default function CopilotPage() {
             <div
               className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold
                 ${m.role === "assistant"
-                  ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900"
+                  ? "bg-sky-500 text-white dark:bg-sky-500 dark:text-white"
                   : "bg-slate-100 text-slate-600 dark:bg-dark-surface dark:text-slate-300"
                 }`}
             >
@@ -221,8 +221,8 @@ export default function CopilotPage() {
 
         {isLoading && (
           <div className="flex gap-3">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-900 text-white dark:bg-white dark:text-slate-900">
-              <Bot className="h-4 w-4" />
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-sky-500 text-white dark:bg-sky-500 dark:text-white">
+              <Bot className="h-4 w-4 text-white" />
             </div>
             <div className="rounded-2xl rounded-tl-sm border border-slate-200 bg-white px-4 py-3 dark:border-dark-border dark:bg-dark-surface">
               <TypingDots />
@@ -269,7 +269,7 @@ export default function CopilotPage() {
           <button
             type="submit"
             disabled={!input.trim() || isLoading}
-            className="absolute bottom-2 right-2 flex h-8 w-8 items-center justify-center rounded-lg bg-slate-900 text-white transition hover:bg-slate-700 disabled:opacity-40 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100"
+            className="absolute bottom-2 right-2 flex h-8 w-8 items-center justify-center rounded-lg bg-sky-500 text-white transition hover:bg-sky-600 disabled:opacity-40 dark:bg-sky-500 dark:text-white dark:hover:bg-sky-400"
           >
             {isLoading ? (
               <Loader2 className="h-4 w-4 animate-spin" />

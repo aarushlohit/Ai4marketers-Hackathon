@@ -216,8 +216,8 @@ export default function ExecutiveDashboardPage() {
         <div className="lg:col-span-2 rounded-2xl border border-slate-200 bg-white shadow-sm flex flex-col min-h-[480px] dark:border-dark-border dark:bg-dark-bg/60 dark:backdrop-blur-xl overflow-hidden">
           {/* Panel header */}
           <div className="flex items-center gap-2 border-b border-slate-200 dark:border-dark-border px-6 py-4">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-900 dark:bg-white">
-              <BarChart3 className="h-4 w-4 text-white dark:text-slate-900" />
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-sky-500 text-white dark:bg-sky-500 dark:text-white">
+              <BarChart3 className="h-4 w-4 text-white" />
             </div>
             <h2 className="text-base font-semibold text-gray-900 dark:text-white">
               Interactive Business Q&A
@@ -282,7 +282,7 @@ export default function ExecutiveDashboardPage() {
               <button
                 type="submit"
                 disabled={isAsking || !question}
-                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:bg-slate-700 dark:hover:bg-slate-100 disabled:opacity-40 transition"
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-sky-500 text-white hover:bg-sky-600 dark:bg-sky-500 dark:text-white dark:hover:bg-sky-400 disabled:opacity-40 transition"
               >
                 {isAsking ? (
                   <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white dark:border-slate-900 border-t-transparent" />
