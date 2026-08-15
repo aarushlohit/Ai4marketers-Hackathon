@@ -229,7 +229,7 @@ export function WorkflowsPanel() {
                       setActions([...tpl.actions]);
                       setIsCreating(true);
                     }}
-                    className="ml-2 shrink-0 rounded-lg bg-slate-900 dark:bg-white px-3 py-1.5 text-xs font-semibold text-white dark:text-slate-900 hover:bg-slate-700 dark:hover:bg-slate-100 transition"
+                    className="ml-2 shrink-0 rounded-lg bg-sky-500 hover:bg-sky-600 text-white dark:bg-sky-500 dark:hover:bg-sky-400 dark:text-white px-3 py-1.5 text-xs font-bold transition shadow-sm"
                   >
                     Use
                   </button>

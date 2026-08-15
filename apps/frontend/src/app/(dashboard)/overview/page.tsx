@@ -227,10 +227,12 @@ function DashboardMetrics() {
   );
 }
 
+import { CreatedBySection } from "@/components/CreatedBySection";
+
 export default function OverviewPage() {
   return (
-    <div className="min-h-screen p-8 font-sans md:p-12">
-      <div className="mb-10">
+    <div className="min-h-screen p-8 font-sans md:p-12 space-y-10">
+      <div>
         <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">
           Executive Dashboard
         </h1>
@@ -240,6 +242,7 @@ export default function OverviewPage() {
         </p>
       </div>
       <DashboardMetrics />
+      <CreatedBySection />
     </div>
   );
 }
