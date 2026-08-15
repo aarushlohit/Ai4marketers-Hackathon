@@ -114,6 +114,24 @@ async def get_dashboard_metrics(
         )
     ) or 0
 
+    health_distribution = [
+        {"label": "Excellent", "count": int(await db.scalar(select(func.count(CustomerModel.id)).where(*(
+            CustomerModel.tenant_id == tid, CustomerModel.is_deleted.is_(False), CustomerModel.health_score >= 80
+        )) ) or 0), "color": "#10b981"},
+        {"label": "Good", "count": int(await db.scalar(select(func.count(CustomerModel.id)).where(*(
+            CustomerModel.tenant_id == tid, CustomerModel.is_deleted.is_(False), CustomerModel.health_score >= 60, CustomerModel.health_score < 80
+        )) ) or 0), "color": "#14b8a6"},
+        {"label": "Fair", "count": int(await db.scalar(select(func.count(CustomerModel.id)).where(*(
+            CustomerModel.tenant_id == tid, CustomerModel.is_deleted.is_(False), CustomerModel.health_score >= 40, CustomerModel.health_score < 60
+        )) ) or 0), "color": "#f59e0b"},
+        {"label": "Poor", "count": int(await db.scalar(select(func.count(CustomerModel.id)).where(*(
+            CustomerModel.tenant_id == tid, CustomerModel.is_deleted.is_(False), CustomerModel.health_score >= 20, CustomerModel.health_score < 40
+        )) ) or 0), "color": "#f97316"},
+        {"label": "Critical", "count": int(await db.scalar(select(func.count(CustomerModel.id)).where(*(
+            CustomerModel.tenant_id == tid, CustomerModel.is_deleted.is_(False), CustomerModel.health_score < 20
+        )) ) or 0), "color": "#ef4444"},
+    ]
+
     return {
         "total_customers": total,
         "active_customers": active,
@@ -125,6 +143,8 @@ async def get_dashboard_metrics(
         "pending_recommendations": pending_recs,
         "accepted_revenue": round(float(accepted_rev), 2),
         "new_customers_in_period": new_in_period,
+        "churn_trend": [{"month": "Current", "rate": round(float(avg_churn) * 100, 1)}],
+        "health_distribution": health_distribution,
         "time_range": time_range,
     }
 

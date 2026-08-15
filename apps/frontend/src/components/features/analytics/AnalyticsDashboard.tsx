@@ -25,23 +25,6 @@ const TIME_RANGES: { label: string; value: TimeRange }[] = [
   { label: "1 year", value: "1y" },
 ];
 
-const mockChurnTrend = [
-  { month: "Feb", rate: 4.2 },
-  { month: "Mar", rate: 3.8 },
-  { month: "Apr", rate: 5.1 },
-  { month: "May", rate: 4.5 },
-  { month: "Jun", rate: 3.9 },
-  { month: "Jul", rate: 4.8 },
-];
-
-const mockHealthDist = [
-  { label: "Excellent", count: 312, color: "#10b981" },
-  { label: "Good", count: 489, color: "#14b8a6" },
-  { label: "Fair", count: 287, color: "#f59e0b" },
-  { label: "Poor", count: 124, color: "#f97316" },
-  { label: "Critical", count: 38, color: "#ef4444" },
-];
-
 export function AnalyticsDashboard() {
   const [timeRange, setTimeRange] = useState<TimeRange>("30d");
 
@@ -52,6 +35,8 @@ export function AnalyticsDashboard() {
         .get(`/analytics/dashboard?time_range=${timeRange}`)
         .then((r) => r.data),
   });
+  const churnTrend = data?.churn_trend ?? [];
+  const healthDistribution = data?.health_distribution ?? [];
 
   return (
     <div className="space-y-6">
@@ -118,8 +103,8 @@ export function AnalyticsDashboard() {
           <h3 className="mb-4 text-sm font-bold text-slate-800 dark:text-white">
             Churn Rate Trend
           </h3>
-          <ResponsiveContainer width="100%" height={220}>
-            <LineChart data={mockChurnTrend}>
+          <ResponsiveContainer width="100%" height={220} minWidth={0}>
+            <LineChart data={churnTrend}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(148, 163, 184, 0.15)" />
               <XAxis dataKey="month" tick={{ fontSize: 12, fill: "#94a3b8" }} />
               <YAxis tick={{ fontSize: 12, fill: "#94a3b8" }} unit="%" />
@@ -148,8 +133,8 @@ export function AnalyticsDashboard() {
           <h3 className="mb-4 text-sm font-bold text-slate-800 dark:text-white">
             Health Score Distribution
           </h3>
-          <ResponsiveContainer width="100%" height={220}>
-            <BarChart data={mockHealthDist}>
+          <ResponsiveContainer width="100%" height={220} minWidth={0}>
+            <BarChart data={healthDistribution}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(148, 163, 184, 0.15)" />
               <XAxis dataKey="label" tick={{ fontSize: 11, fill: "#94a3b8" }} />
               <YAxis tick={{ fontSize: 12, fill: "#94a3b8" }} />
@@ -162,7 +147,7 @@ export function AnalyticsDashboard() {
                 }}
               />
               <Bar dataKey="count" radius={[4, 4, 0, 0]}>
-                {mockHealthDist.map((entry, index) => (
+                {healthDistribution.map((entry: { color: string }, index: number) => (
                   <Cell key={`cell-${index}`} fill={entry.color} />
                 ))}
               </Bar>
