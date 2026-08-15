@@ -66,8 +66,8 @@ export const SalesPipelineChart = memo(function SalesPipelineChart() {
   if (!hasData) return <PipelineEmpty />;
 
   return (
-    <div className="h-[250px] w-full">
-      <ResponsiveContainer width="100%" height="100%">
+    <div className="h-[250px] min-w-0 w-full">
+      <ResponsiveContainer width="100%" height="100%" minWidth={0}>
         <BarChart
           data={stages}
           margin={{ top: 8, right: 8, left: -8, bottom: 0 }}
