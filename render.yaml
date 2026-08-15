@@ -1,0 +1,145 @@
+services:
+  # ── Core Backend API ──
+  - type: web
+    name: mb-backend
+    plan: free
+    env: python
+    rootDir: apps/backend
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port $PORT"
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: mb-postgres
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: mb-redis
+          property: connectionString
+      - key: ENVIRONMENT
+        value: production
+      - key: SECRET_KEY
+        generateValue: true
+      - key: JWT_SECRET
+        generateValue: true
+      - key: INTERNAL_API_KEY
+        generateValue: true
+      - key: WEBHOOK_SECRET
+        generateValue: true
+      - key: SECURITY_ENGINE_URL
+        fromService:
+          type: web
+          name: mb-security-engine
+          property: hostport
+      - key: AI_ENGINE_URL
+        fromService:
+          type: web
+          name: mb-ai-engine
+          property: hostport
+      - key: CRM_SERVICE_URL
+        fromService:
+          type: web
+          name: mb-crm-integration
+          property: hostport
+      - key: ALLOWED_ORIGINS
+        value: https://mb-frontend.onrender.com
+      - key: FRONTEND_URL
+        value: https://miracle-birds-crm-frontend.vercel.app
+      - key: TRUSTED_HOSTS
+        value: mb-backend.onrender.com,localhost
+
+  # ── Next.js Frontend ──
+  - type: web
+    name: mb-frontend
+    plan: free
+    env: node
+    rootDir: apps/frontend
+    buildCommand: "npm ci && npm run build"
+    startCommand: "npm start"
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_PUBLIC_API_URL
+        value: https://mb-backend.onrender.com
+
+  # ── Security Engine ──
+  - type: web
+    name: mb-security-engine
+    plan: free
+    env: python
+    rootDir: apps/security-engine
+    buildCommand: "pip install -r requirements.prod.txt"
+    startCommand: "uvicorn main:app --host 0.0.0.0 --port $PORT"
+    healthCheckPath: /health
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: mb-redis
+          property: connectionString
+
+  # ── AI Engine ──
+  - type: web
+    name: mb-ai-engine
+    plan: free
+    env: python
+    rootDir: apps/ai-engine
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "uvicorn main:app --host 0.0.0.0 --port $PORT"
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: mb-postgres
+          property: connectionString
+      - key: ENVIRONMENT
+        value: production
+
+  # ── CRM Integration ──
+  - type: web
+    name: mb-crm-integration
+    plan: free
+    env: python
+    rootDir: apps/crm-integration
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "uvicorn main:app --host 0.0.0.0 --port $PORT"
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: mb-postgres
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: mb-redis
+          property: connectionString
+      - key: BACKEND_INTERNAL_URL
+        fromService:
+          type: web
+          name: mb-backend
+          property: hostport
+      - key: INTERNAL_API_KEY
+        fromService:
+          type: web
+          name: mb-backend
+          envVarKey: INTERNAL_API_KEY
+      - key: ENVIRONMENT
+        value: production
+
+  # ── Redis ──
+  - type: redis
+    name: mb-redis
+    plan: free
+    maxmemoryPolicy: allkeys-lru
+    ipAllowList: []
+
+databases:
+  - name: mb-postgres
+    databaseName: miracle_birds
+    user: miracle_birds_user
+    plan: free

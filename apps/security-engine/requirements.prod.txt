@@ -1,0 +1,8 @@
+# Lightweight production deps — pattern firewall only (no torch/transformers)
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+pydantic==2.5.2
+pydantic-settings==2.1.0
+redis==5.0.1
+structlog==23.2.0
+python-dotenv==1.0.0

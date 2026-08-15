@@ -1,0 +1,62 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ["alertmanager:9093"]
+
+rule_files:
+  - "alerts/*.yml"
+
+scrape_configs:
+  # Miracle Birds Backend
+  - job_name: "miracle-birds-backend"
+    metrics_path: "/metrics"
+    static_configs:
+      - targets: ["miracle-birds-backend:8000"]
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+
+  # Miracle Birds AI Engine
+  - job_name: "miracle-birds-ai-engine"
+    static_configs:
+      - targets: ["miracle-birds-ai-engine:8001"]
+
+  # Miracle Birds ML Engine
+  - job_name: "miracle-birds-ml-engine"
+    static_configs:
+      - targets: ["miracle-birds-ml-engine:8002"]
+
+  # PostgreSQL
+  - job_name: "postgres"
+    static_configs:
+      - targets: ["postgres-exporter:9187"]
+
+  # Redis
+  - job_name: "redis"
+    static_configs:
+      - targets: ["redis-exporter:9121"]
+
+  # Kubernetes nodes
+  - job_name: "kubernetes-nodes"
+    kubernetes_sd_configs:
+      - role: node
+    relabel_configs:
+      - action: labelmap
+        regex: __meta_kubernetes_node_label_(.+)
+
+  # Kubernetes pods
+  - job_name: "kubernetes-pods"
+    kubernetes_sd_configs:
+      - role: pod
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+        action: keep
+        regex: true
+      - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+        action: replace
+        target_label: __metrics_path__
+        regex: (.+)

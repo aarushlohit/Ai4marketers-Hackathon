@@ -1,0 +1,1267 @@
+openapi: 3.0.3
+info:
+  title: Miracle Birds API
+  description: |
+    # Miracle Birds - AI Intelligence Layer for CRM
+    
+    The Secure AI Intelligence Layer for Every CRM. Miracle Birds provides AI-powered customer intelligence, predictive analytics, and workflow automation on top of existing CRM platforms.
+    
+    ## Features
+    - 🤖 AI CRM Copilot
+    - 📊 Customer 360 Intelligence
+    - 📈 Predictive Analytics (Churn, Lead Scoring, Revenue)
+    - 🔗 CRM Integration (Salesforce, Zoho, HubSpot, Dynamics, Pipedrive)
+    - 🔒 Enterprise Security & Compliance
+    - 🚀 Workflow Automation
+    
+    ## Authentication
+    All API endpoints (except auth endpoints) require a valid JWT token in the Authorization header:
+    ```
+    Authorization: Bearer <your_jwt_token>
+    ```
+    
+    ## Rate Limiting
+    - **Standard Plan**: 1,000 requests/hour
+    - **Professional Plan**: 5,000 requests/hour
+    - **Enterprise Plan**: Unlimited
+    
+    ## Base URLs
+    - **Production**: `https://api.miraclebirds.ai`
+    - **Staging**: `https://api-staging.miraclebirds.ai`
+    - **Development**: `http://localhost:8000`
+    
+  version: 1.0.0
+  contact:
+    name: Miracle Birds API Support
+    email: api@miraclebirds.ai
+    url: https://miraclebirds.ai/support
+  license:
+    name: Proprietary
+    url: https://miraclebirds.ai/terms
+
+servers:
+  - url: https://api.miraclebirds.ai
+    description: Production server
+  - url: https://api-staging.miraclebirds.ai
+    description: Staging server
+  - url: http://localhost:8000
+    description: Development server
+
+tags:
+  - name: Authentication
+    description: User authentication and authorization
+  - name: Customers
+    description: Customer management and customer intelligence
+  - name: Predictions
+    description: AI predictions (churn, lead scoring, revenue)
+  - name: Analytics
+    description: Analytics and reporting
+  - name: Integrations
+    description: CRM integrations management
+  - name: Users
+    description: User management
+  - name: Workflows
+    description: Workflow automation
+  - name: AI Copilot
+    description: AI assistant and copilot features
+  - name: Health
+    description: System health and status
+
+paths:
+  # ==================== HEALTH CHECK ====================
+  /health:
+    get:
+      tags:
+        - Health
+      summary: Health check
+      description: Check API health status
+      operationId: healthCheck
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: healthy
+                  timestamp:
+                    type: string
+                    format: date-time
+                  version:
+                    type: string
+                    example: 1.0.0
+
+  # ==================== AUTHENTICATION ====================
+  /api/v1/auth/register:
+    post:
+      tags:
+        - Authentication
+      summary: Register new user
+      description: Create a new user account
+      operationId: registerUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+                - first_name
+                - last_name
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: john@example.com
+                password:
+                  type: string
+                  format: password
+                  minLength: 8
+                  example: SecurePass123!
+                first_name:
+                  type: string
+                  example: John
+                last_name:
+                  type: string
+                  example: Doe
+                company_name:
+                  type: string
+                  example: Acme Corp
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          description: Email already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/v1/auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: User login
+      description: Authenticate user and return JWT tokens
+      operationId: loginUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: john@example.com
+                password:
+                  type: string
+                  format: password
+                  example: SecurePass123!
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/v1/auth/refresh:
+    post:
+      tags:
+        - Authentication
+      summary: Refresh access token
+      description: Get new access token using refresh token
+      operationId: refreshToken
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - refresh_token
+              properties:
+                refresh_token:
+                  type: string
+                  example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+      responses:
+        '200':
+          description: Token refreshed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/v1/auth/logout:
+    post:
+      tags:
+        - Authentication
+      summary: User logout
+      description: Invalidate user tokens
+      operationId: logoutUser
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Logout successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Logged out successfully
+
+  # ==================== CUSTOMERS ====================
+  /api/v1/customers:
+    get:
+      tags:
+        - Customers
+      summary: List customers
+      description: Get paginated list of customers with filtering
+      operationId: listCustomers
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PageSizeParam'
+        - name: search
+          in: query
+          schema:
+            type: string
+          description: Search by name or email
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [active, inactive, churned]
+        - name: crm_source
+          in: query
+          schema:
+            type: string
+            enum: [salesforce, zoho, hubspot, dynamics, pipedrive]
+      responses:
+        '200':
+          description: List of customers
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  customers:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Customer'
+                  total:
+                    type: integer
+                    example: 1500
+                  page:
+                    type: integer
+                    example: 1
+                  page_size:
+                    type: integer
+                    example: 50
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    
+    post:
+      tags:
+        - Customers
+      summary: Create customer
+      description: Create a new customer record
+      operationId: createCustomer
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerCreate'
+      responses:
+        '201':
+          description: Customer created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/v1/customers/{customer_id}:
+    get:
+      tags:
+        - Customers
+      summary: Get customer
+      description: Get customer details by ID
+      operationId: getCustomer
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: customer_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Customer ID
+      responses:
+        '200':
+          description: Customer details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerDetail'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    
+    put:
+      tags:
+        - Customers
+      summary: Update customer
+      description: Update customer information
+      operationId: updateCustomer
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: customer_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerUpdate'
+      responses:
+        '200':
+          description: Customer updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    
+    delete:
+      tags:
+        - Customers
+      summary: Delete customer
+      description: Soft delete a customer
+      operationId: deleteCustomer
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: customer_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Customer deleted successfully
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/v1/customers/{customer_id}/360:
+    get:
+      tags:
+        - Customers
+      summary: Customer 360 view
+      description: Get comprehensive customer intelligence
+      operationId: getCustomer360
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: customer_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Customer 360 intelligence
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer360'
+
+  # ==================== PREDICTIONS ====================
+  /api/v1/predictions/churn:
+    post:
+      tags:
+        - Predictions
+      summary: Predict churn
+      description: Get churn prediction for a customer
+      operationId: predictChurn
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - customer_id
+              properties:
+                customer_id:
+                  type: string
+                  format: uuid
+      responses:
+        '200':
+          description: Churn prediction
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChurnPrediction'
+
+  /api/v1/predictions/lead-score:
+    post:
+      tags:
+        - Predictions
+      summary: Score lead
+      description: Calculate lead score
+      operationId: scoreLeadPost
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - customer_id
+              properties:
+                customer_id:
+                  type: string
+                  format: uuid
+      responses:
+        '200':
+          description: Lead score
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeadScore'
+
+  /api/v1/predictions/revenue:
+    post:
+      tags:
+        - Predictions
+      summary: Predict revenue
+      description: Forecast customer revenue
+      operationId: predictRevenue
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - customer_id
+                - time_horizon
+              properties:
+                customer_id:
+                  type: string
+                  format: uuid
+                time_horizon:
+                  type: integer
+                  description: Days to forecast
+                  example: 90
+      responses:
+        '200':
+          description: Revenue prediction
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RevenuePrediction'
+
+  /api/v1/predictions/health-score/{customer_id}:
+    get:
+      tags:
+        - Predictions
+      summary: Get customer health score
+      description: Calculate customer health score
+      operationId: getHealthScore
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: customer_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Customer health score
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthScore'
+
+  # ==================== ANALYTICS ====================
+  /api/v1/analytics/dashboard:
+    get:
+      tags:
+        - Analytics
+      summary: Get dashboard metrics
+      description: Retrieve key metrics for dashboard
+      operationId: getDashboardMetrics
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: time_range
+          in: query
+          schema:
+            type: string
+            enum: [7d, 30d, 90d, 1y]
+            default: 30d
+      responses:
+        '200':
+          description: Dashboard metrics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DashboardMetrics'
+
+  /api/v1/analytics/reports:
+    get:
+      tags:
+        - Analytics
+      summary: List reports
+      description: Get available reports
+      operationId: listReports
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: List of reports
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  reports:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Report'
+
+  # ==================== INTEGRATIONS ====================
+  /api/v1/integrations/{crm_type}/authorize:
+    get:
+      tags:
+        - Integrations
+      summary: Initiate OAuth flow
+      description: Get OAuth authorization URL for CRM
+      operationId: initiateOAuth
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: crm_type
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [salesforce, zoho, hubspot, dynamics, pipedrive]
+      responses:
+        '200':
+          description: Authorization URL
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  authorization_url:
+                    type: string
+                    example: https://login.salesforce.com/oauth2/authorize?...
+
+  /api/v1/integrations/connections:
+    get:
+      tags:
+        - Integrations
+      summary: List CRM connections
+      description: Get all active CRM connections
+      operationId: listConnections
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: List of connections
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  connections:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CRMConnection'
+
+  /api/v1/integrations/connections/{connection_id}:
+    delete:
+      tags:
+        - Integrations
+      summary: Delete CRM connection
+      description: Disconnect from CRM
+      operationId: deleteConnection
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: connection_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Connection deleted successfully
+
+  /api/v1/integrations/sync/{connection_id}/start:
+    post:
+      tags:
+        - Integrations
+      summary: Start sync job
+      description: Manually trigger CRM data sync
+      operationId: startSync
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: connection_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: sync_type
+          in: query
+          schema:
+            type: string
+            enum: [full, incremental]
+            default: incremental
+      responses:
+        '202':
+          description: Sync job started
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SyncJob'
+
+  # ==================== AI COPILOT ====================
+  /api/v1/copilot/chat:
+    post:
+      tags:
+        - AI Copilot
+      summary: Chat with AI Copilot
+      description: Send message to AI assistant
+      operationId: chatWithCopilot
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - message
+              properties:
+                message:
+                  type: string
+                  example: What are my top at-risk customers?
+                context:
+                  type: object
+                  description: Additional context
+      responses:
+        '200':
+          description: AI response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CopilotResponse'
+
+  /api/v1/copilot/conversations:
+    get:
+      tags:
+        - AI Copilot
+      summary: List conversations
+      description: Get chat history
+      operationId: listConversations
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: List of conversations
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  conversations:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Conversation'
+
+  # ==================== USERS ====================
+  /api/v1/users/me:
+    get:
+      tags:
+        - Users
+      summary: Get current user
+      description: Get authenticated user profile
+      operationId: getCurrentUser
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+
+  /api/v1/users/me:
+    put:
+      tags:
+        - Users
+      summary: Update current user
+      description: Update user profile
+      operationId: updateCurrentUser
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdate'
+      responses:
+        '200':
+          description: User updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+
+  # ==================== WORKFLOWS ====================
+  /api/v1/workflows:
+    get:
+      tags:
+        - Workflows
+      summary: List workflows
+      description: Get all workflow definitions
+      operationId: listWorkflows
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: List of workflows
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  workflows:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Workflow'
+
+# ==================== COMPONENTS ====================
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    PageParam:
+      name: page
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+      description: Page number
+    
+    PageSizeParam:
+      name: page_size
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 50
+      description: Items per page
+
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          example: Invalid request
+        detail:
+          type: string
+          example: Email is required
+        code:
+          type: string
+          example: validation_error
+
+    TokenResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        refresh_token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        token_type:
+          type: string
+          example: bearer
+        expires_in:
+          type: integer
+          example: 1800
+
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        first_name:
+          type: string
+        last_name:
+          type: string
+        role:
+          type: string
+          enum: [super_admin, admin, manager, user, viewer]
+        tenant_id:
+          type: string
+          format: uuid
+        created_at:
+          type: string
+          format: date-time
+
+    UserUpdate:
+      type: object
+      properties:
+        first_name:
+          type: string
+        last_name:
+          type: string
+        phone:
+          type: string
+
+    Customer:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        external_id:
+          type: string
+        crm_source:
+          type: string
+          enum: [salesforce, zoho, hubspot, dynamics, pipedrive]
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+        company:
+          type: string
+        title:
+          type: string
+        status:
+          type: string
+          enum: [active, inactive, churned]
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    CustomerCreate:
+      type: object
+      required:
+        - first_name
+        - last_name
+        - email
+      properties:
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+        company:
+          type: string
+        title:
+          type: string
+
+    CustomerUpdate:
+      type: object
+      properties:
+        first_name:
+          type: string
+        last_name:
+          type: string
+        phone:
+          type: string
+        company:
+          type: string
+        title:
+          type: string
+        status:
+          type: string
+
+    CustomerDetail:
+      allOf:
+        - $ref: '#/components/schemas/Customer'
+        - type: object
+          properties:
+            health_score:
+              type: number
+              format: float
+              example: 85.5
+            churn_risk:
+              type: string
+              enum: [low, medium, high]
+            lead_score:
+              type: integer
+              example: 92
+            lifetime_value:
+              type: number
+              format: float
+              example: 25000.00
+            interactions_count:
+              type: integer
+              example: 45
+
+    Customer360:
+      type: object
+      properties:
+        customer:
+          $ref: '#/components/schemas/CustomerDetail'
+        predictions:
+          type: object
+          properties:
+            churn:
+              $ref: '#/components/schemas/ChurnPrediction'
+            lead_score:
+              $ref: '#/components/schemas/LeadScore'
+            revenue:
+              $ref: '#/components/schemas/RevenuePrediction'
+            health_score:
+              $ref: '#/components/schemas/HealthScore'
+        interactions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Interaction'
+        recommendations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Recommendation'
+
+    ChurnPrediction:
+      type: object
+      properties:
+        customer_id:
+          type: string
+          format: uuid
+        churn_probability:
+          type: number
+          format: float
+          example: 0.72
+        risk_level:
+          type: string
+          enum: [low, medium, high]
+        factors:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              impact:
+                type: number
+        predicted_churn_date:
+          type: string
+          format: date
+        confidence:
+          type: number
+          format: float
+          example: 0.89
+
+    LeadScore:
+      type: object
+      properties:
+        customer_id:
+          type: string
+          format: uuid
+        score:
+          type: integer
+          minimum: 0
+          maximum: 100
+          example: 85
+        grade:
+          type: string
+          enum: [A, B, C, D, F]
+        factors:
+          type: array
+          items:
+            type: object
+
+    RevenuePrediction:
+      type: object
+      properties:
+        customer_id:
+          type: string
+          format: uuid
+        predicted_revenue:
+          type: number
+          format: float
+          example: 15000.00
+        time_horizon_days:
+          type: integer
+          example: 90
+        confidence_interval:
+          type: object
+          properties:
+            lower:
+              type: number
+            upper:
+              type: number
+
+    HealthScore:
+      type: object
+      properties:
+        customer_id:
+          type: string
+          format: uuid
+        score:
+          type: number
+          format: float
+          example: 85.5
+        status:
+          type: string
+          enum: [excellent, good, fair, poor, critical]
+        factors:
+          type: object
+
+    CRMConnection:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        crm_type:
+          type: string
+          enum: [salesforce, zoho, hubspot, dynamics, pipedrive]
+        status:
+          type: string
+          enum: [active, inactive, error]
+        instance_url:
+          type: string
+        last_sync:
+          type: string
+          format: date-time
+        created_at:
+          type: string
+          format: date-time
+
+    SyncJob:
+      type: object
+      properties:
+        job_id:
+          type: string
+        connection_id:
+          type: string
+          format: uuid
+        sync_type:
+          type: string
+          enum: [full, incremental]
+        status:
+          type: string
+          enum: [pending, running, completed, failed]
+        started_at:
+          type: string
+          format: date-time
+        records_synced:
+          type: integer
+
+    CopilotResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        conversation_id:
+          type: string
+          format: uuid
+        suggestions:
+          type: array
+          items:
+            type: string
+
+    Conversation:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        messages_count:
+          type: integer
+
+    Interaction:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum: [email, call, meeting, note]
+        timestamp:
+          type: string
+          format: date-time
+        summary:
+          type: string
+
+    Recommendation:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [next_best_action, upsell, retention]
+        title:
+          type: string
+        description:
+          type: string
+        priority:
+          type: string
+          enum: [low, medium, high, urgent]
+
+    DashboardMetrics:
+      type: object
+      properties:
+        total_customers:
+          type: integer
+        active_customers:
+          type: integer
+        at_risk_customers:
+          type: integer
+        churn_rate:
+          type: number
+          format: float
+        avg_health_score:
+          type: number
+          format: float
+        total_revenue:
+          type: number
+          format: float
+        predicted_revenue:
+          type: number
+          format: float
+
+    Report:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+
+    Workflow:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+          enum: [active, inactive, draft]
+        trigger_type:
+          type: string
+        actions_count:
+          type: integer

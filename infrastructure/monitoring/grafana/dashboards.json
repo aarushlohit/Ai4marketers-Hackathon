@@ -1,0 +1,112 @@
+{
+  "dashboards": [
+    {
+      "name": "Miracle Birds - Overview",
+      "uid": "mb-overview",
+      "panels": [
+        {
+          "title": "API Request Rate",
+          "type": "graph",
+          "targets": [
+            {
+              "expr": "rate(http_requests_total[5m])",
+              "legendFormat": "{{ method }} {{ endpoint }}"
+            }
+          ]
+        },
+        {
+          "title": "API Error Rate",
+          "type": "graph",
+          "targets": [
+            {
+              "expr": "rate(http_requests_total{status=~'5..'}[5m]) / rate(http_requests_total[5m]) * 100",
+              "legendFormat": "Error %"
+            }
+          ]
+        },
+        {
+          "title": "API Latency (P95)",
+          "type": "graph",
+          "targets": [
+            {
+              "expr": "histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))",
+              "legendFormat": "P95 Latency"
+            }
+          ]
+        },
+        {
+          "title": "Active Users",
+          "type": "stat",
+          "targets": [
+            {
+              "expr": "active_users_total",
+              "legendFormat": "Active Users"
+            }
+          ]
+        },
+        {
+          "title": "ML Predictions / min",
+          "type": "stat",
+          "targets": [
+            {
+              "expr": "rate(ml_predictions_total[1m]) * 60",
+              "legendFormat": "Predictions/min"
+            }
+          ]
+        },
+        {
+          "title": "CRM Sync Status",
+          "type": "table",
+          "targets": [
+            {
+              "expr": "crm_sync_status",
+              "legendFormat": "{{ crm_type }}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Miracle Birds - AI/ML Metrics",
+      "uid": "mb-ai-ml",
+      "panels": [
+        {
+          "title": "Churn Predictions / hour",
+          "type": "graph",
+          "targets": [
+            {
+              "expr": "increase(ml_predictions_total{model='churn'}[1h])"
+            }
+          ]
+        },
+        {
+          "title": "Lead Scoring Latency",
+          "type": "graph",
+          "targets": [
+            {
+              "expr": "histogram_quantile(0.95, rate(ml_inference_duration_seconds_bucket{model='lead_score'}[5m]))"
+            }
+          ]
+        },
+        {
+          "title": "LLM Token Usage",
+          "type": "stat",
+          "targets": [
+            {
+              "expr": "sum(llm_tokens_used_total)"
+            }
+          ]
+        },
+        {
+          "title": "AI Copilot Requests",
+          "type": "graph",
+          "targets": [
+            {
+              "expr": "rate(copilot_requests_total[5m])"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "services": {
+    "mb-backend": {
+      "root": "apps/backend",
+      "entrypoint": "main:app",
+      "buildCommand": "pip install -r requirements.txt"
+    },
+    "mb-frontend": {
+      "root": "apps/frontend",
+      "framework": "nextjs",
+      "buildCommand": "npm ci && npm run build"
+    },
+    "mb-security-engine": {
+      "root": "apps/security-engine",
+      "entrypoint": "main:app",
+      "buildCommand": "pip install -r requirements.prod.txt"
+    },
+    "mb-ai-engine": {
+      "root": "apps/ai-engine",
+      "entrypoint": "main:app",
+      "buildCommand": "pip install -r requirements.txt"
+    },
+    "mb-crm-integration": {
+      "root": "apps/crm-integration",
+      "entrypoint": "main:app",
+      "buildCommand": "pip install -r requirements.txt"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/api/mb-security-engine(/.*)?",
+      "destination": {
+        "type": "service",
+        "service": "mb-security-engine"
+      }
+    },
+    {
+      "source": "/api/mb-crm-integration(/.*)?",
+      "destination": {
+        "type": "service",
+        "service": "mb-crm-integration"
+      }
+    },
+    {
+      "source": "/api/mb-ai-engine(/.*)?",
+      "destination": {
+        "type": "service",
+        "service": "mb-ai-engine"
+      }
+    },
+    {
+      "source": "/api/mb-backend(/.*)?",
+      "destination": {
+        "type": "service",
+        "service": "mb-backend"
+      }
+    },
+    {
+      "source": "/(.*)",
+      "destination": {
+        "type": "service",
+        "service": "mb-frontend"
+      }
+    }
+  ],
+  "experimentalServices": {
+    "mb-backend": {
+      "type": "web",
+      "root": "apps/backend",
+      "entrypoint": "main:app",
+      "routePrefix": "/_/mb-backend",
+      "buildCommand": "pip install -r requirements.txt"
+    },
+    "mb-frontend": {
+      "type": "web",
+      "root": "apps/frontend",
+      "routePrefix": "/",
+      "framework": "nextjs",
+      "buildCommand": "npm ci && npm run build"
+    },
+    "mb-security-engine": {
+      "type": "web",
+      "root": "apps/security-engine",
+      "entrypoint": "main:app",
+      "routePrefix": "/_/mb-security-engine",
+      "buildCommand": "pip install -r requirements.prod.txt"
+    },
+    "mb-ai-engine": {
+      "type": "web",
+      "root": "apps/ai-engine",
+      "entrypoint": "main:app",
+      "routePrefix": "/_/mb-ai-engine",
+      "buildCommand": "pip install -r requirements.txt"
+    },
+    "mb-crm-integration": {
+      "type": "web",
+      "root": "apps/crm-integration",
+      "entrypoint": "main:app",
+      "routePrefix": "/_/mb-crm-integration",
+      "buildCommand": "pip install -r requirements.txt"
+    }
+  }
+}

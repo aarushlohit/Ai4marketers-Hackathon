@@ -1,0 +1,33 @@
+{
+  "name": "miracle-birds",
+  "version": "1.0.0",
+  "description": "Miracle Birds - AI Intelligence Layer for CRM",
+  "private": true,
+  "packageManager": "npm@11.18.0",
+  "workspaces": [
+    "apps/frontend",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "docker:up": "docker compose up --build",
+    "docker:down": "docker compose down"
+  },
+  "devDependencies": {
+    "prettier": "^3.1.0",
+    "turbo": "^2.10.5",
+    "typescript": "^5.3.0"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  },
+  "dependencies": {
+    "axios": "1.18.1",
+    "next": "14.2.35"
+  }
+}

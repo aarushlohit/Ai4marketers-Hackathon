@@ -1,0 +1,121 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: miracle-birds-backend
+  labels:
+    app: miracle-birds
+    component: backend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: miracle-birds
+      component: backend
+  template:
+    metadata:
+      labels:
+        app: miracle-birds
+        component: backend
+    spec:
+      containers:
+      - name: backend
+        image: miraclebirds/backend:latest
+        ports:
+        - containerPort: 8000
+          name: http
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: miracle-birds-secrets
+              key: database-url
+        - name: REDIS_URL
+          valueFrom:
+            secretKeyRef:
+              name: miracle-birds-secrets
+              key: redis-url
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: miracle-birds-secrets
+              key: jwt-secret
+        - name: OPENAI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: miracle-birds-secrets
+              key: openai-api-key
+        - name: INTERNAL_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: miracle-birds-secrets
+              key: internal-api-key
+        - name: SECURITY_ENGINE_URL
+          value: "http://miracle-birds-security-engine:8004"
+        - name: TRUSTED_HOSTS
+          value: "miraclebirds.ai,api.miraclebirds.ai"
+        - name: ALLOWED_ORIGINS
+          value: "https://miraclebirds.ai"
+        - name: ENVIRONMENT
+          value: "production"
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 10
+          periodSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: miracle-birds-backend
+  labels:
+    app: miracle-birds
+    component: backend
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8000
+    targetPort: 8000
+    protocol: TCP
+    name: http
+  selector:
+    app: miracle-birds
+    component: backend
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: miracle-birds-backend-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: miracle-birds-backend
+  minReplicas: 3
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80

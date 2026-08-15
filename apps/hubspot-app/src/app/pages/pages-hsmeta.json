@@ -1,0 +1,7 @@
+{
+  "uid": "miracle_birds_crm_page",
+  "type": "page",
+  "config": {
+    "entrypoint": "/app/pages/Pages.tsx"
+  }
+}
