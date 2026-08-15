@@ -2,6 +2,13 @@ import React from "react";
 import Link from "next/link";
 import { CreatedBySection } from "@/components/CreatedBySection";
 import {
+  SalesforceLogo,
+  HubspotLogo,
+  ZohoLogo,
+  DynamicsLogo,
+  PipedriveLogo,
+} from "@/components/CrmLogos";
+import {
   Bird,
   ShieldCheck,
   Lock,
@@ -103,14 +110,29 @@ export default function LandingPage() {
         <section className="py-10 border-y border-white/10 dark:border-white/10 border-slate-200 bg-white/[0.02] dark:bg-white/[0.02] bg-slate-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <p className="text-sm text-slate-500 font-medium uppercase tracking-widest mb-6">
-              Trusted by leading revenue teams
+              Supported & Integrated Enterprise Platforms
             </p>
-            <div className="flex flex-wrap justify-center gap-8 md:gap-16 items-center text-slate-500 dark:text-slate-500 text-slate-400 font-bold text-xl md:text-2xl grayscale opacity-70">
-              <span>Acme Corp</span>
-              <span>Globex</span>
-              <span>Soylent</span>
-              <span>Initech</span>
-              <span>Stark Ind.</span>
+            <div className="flex flex-wrap justify-center gap-8 md:gap-14 items-center">
+              <div className="flex items-center gap-2 font-semibold text-slate-300 dark:text-slate-300">
+                <SalesforceLogo className="h-7 w-7" />
+                <span className="text-sm">Salesforce</span>
+              </div>
+              <div className="flex items-center gap-2 font-semibold text-slate-300 dark:text-slate-300">
+                <HubspotLogo className="h-7 w-7" />
+                <span className="text-sm">HubSpot</span>
+              </div>
+              <div className="flex items-center gap-2 font-semibold text-slate-300 dark:text-slate-300">
+                <ZohoLogo className="h-7 w-7" />
+                <span className="text-sm">Zoho CRM</span>
+              </div>
+              <div className="flex items-center gap-2 font-semibold text-slate-300 dark:text-slate-300">
+                <DynamicsLogo className="h-7 w-7" />
+                <span className="text-sm">Dynamics 365</span>
+              </div>
+              <div className="flex items-center gap-2 font-semibold text-slate-300 dark:text-slate-300">
+                <PipedriveLogo className="h-7 w-7" />
+                <span className="text-sm">Pipedrive</span>
+              </div>
             </div>
           </div>
         </section>

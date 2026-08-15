@@ -5,14 +5,14 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { CheckCircle2, XCircle, RefreshCw, Plug, Trash2 } from "lucide-react";
 import { apiClient } from "@/lib/api/client";
 
-type CRMType = "salesforce" | "zoho" | "hubspot" | "dynamics" | "pipedrive";
+import { CrmLogo, CRMType } from "@/components/CrmLogos";
 
-const CRM_PLATFORMS: { id: CRMType; name: string; logo: string }[] = [
-  { id: "salesforce", name: "Salesforce", logo: "☁️" },
-  { id: "zoho", name: "Zoho CRM", logo: "📊" },
-  { id: "hubspot", name: "HubSpot", logo: "🔶" },
-  { id: "dynamics", name: "Dynamics 365", logo: "🪟" },
-  { id: "pipedrive", name: "Pipedrive", logo: "🔵" },
+const CRM_PLATFORMS: { id: CRMType; name: string }[] = [
+  { id: "salesforce", name: "Salesforce" },
+  { id: "zoho", name: "Zoho CRM" },
+  { id: "hubspot", name: "HubSpot" },
+  { id: "dynamics", name: "Dynamics 365" },
+  { id: "pipedrive", name: "Pipedrive" },
 ];
 
 interface Connection {
@@ -104,7 +104,9 @@ export function IntegrationsPanel() {
                   className="flex items-center justify-between rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-dark-border dark:bg-dark-surface"
                 >
                   <div className="flex items-center gap-3">
-                    <span className="text-2xl">{platform?.logo}</span>
+                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-50 dark:bg-dark-bg p-1.5 border border-slate-100 dark:border-dark-border">
+                      <CrmLogo type={conn.crm_type} className="h-6 w-6 shrink-0" />
+                    </div>
                     <div>
                       <p className="text-sm font-medium text-gray-900 dark:text-white">
                         {platform?.name}
@@ -170,7 +172,9 @@ export function IntegrationsPanel() {
                 className="flex items-center justify-between rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-dark-border dark:bg-dark-surface"
               >
                 <div className="flex items-center gap-3">
-                  <span className="text-2xl">{platform.logo}</span>
+                  <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-50 dark:bg-dark-bg p-1.5 border border-slate-100 dark:border-dark-border">
+                    <CrmLogo type={platform.id} className="h-6 w-6 shrink-0" />
+                  </div>
                   <p className="text-sm font-medium text-gray-900 dark:text-white">
                     {platform.name}
                   </p>
