@@ -62,5 +62,42 @@
         "service": "mb-frontend"
       }
     }
-  ]
+  ],
+  "experimentalServices": {
+    "mb-backend": {
+      "type": "web",
+      "root": "apps/backend",
+      "entrypoint": "main:app",
+      "routePrefix": "/_/mb-backend",
+      "buildCommand": "pip install -r requirements.txt"
+    },
+    "mb-frontend": {
+      "type": "web",
+      "root": "apps/frontend",
+      "routePrefix": "/",
+      "framework": "nextjs",
+      "buildCommand": "npm ci && npm run build"
+    },
+    "mb-security-engine": {
+      "type": "web",
+      "root": "apps/security-engine",
+      "entrypoint": "main:app",
+      "routePrefix": "/_/mb-security-engine",
+      "buildCommand": "pip install -r requirements.prod.txt"
+    },
+    "mb-ai-engine": {
+      "type": "web",
+      "root": "apps/ai-engine",
+      "entrypoint": "main:app",
+      "routePrefix": "/_/mb-ai-engine",
+      "buildCommand": "pip install -r requirements.txt"
+    },
+    "mb-crm-integration": {
+      "type": "web",
+      "root": "apps/crm-integration",
+      "entrypoint": "main:app",
+      "routePrefix": "/_/mb-crm-integration",
+      "buildCommand": "pip install -r requirements.txt"
+    }
+  }
 }
