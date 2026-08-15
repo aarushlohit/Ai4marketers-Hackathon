@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Send, Bot, User, Sparkles, Loader2, X, Plus, MessageSquare } from "lucide-react";
+import { Send, Bot, User, Sparkles, Loader2, X, Plus, MessageSquare, Bell, TrendingDown, FileText, DollarSign } from "lucide-react";
 import { apiClient } from "@/lib/api/client";
 
 interface Message {
@@ -21,10 +21,10 @@ const MODELS = [
 ] as const;
 
 const STARTER_PROMPTS = [
-  { label: "Which customers need attention today?", icon: "🔔" },
-  { label: "Show customers likely to churn.", icon: "📉" },
-  { label: "Summarize TechGlobal account.", icon: "📋" },
-  { label: "Why did revenue decrease?", icon: "💰" },
+  { label: "Which customers need attention today?", icon: Bell },
+  { label: "Show customers likely to churn.", icon: TrendingDown },
+  { label: "Summarize TechGlobal account.", icon: FileText },
+  { label: "Why did revenue decrease?", icon: DollarSign },
 ];
 
 function formatTime(date: Date) {
@@ -243,7 +243,7 @@ export default function CopilotPage() {
                 onClick={() => sendMessage(p.label)}
                 className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-600 transition hover:border-slate-300 hover:bg-white hover:shadow-sm dark:border-dark-border dark:bg-dark-surface dark:text-slate-300 dark:hover:bg-dark-bg"
               >
-                <span>{p.icon}</span>
+                <p.icon className="h-3.5 w-3.5 text-sky-500" />
                 {p.label}
               </button>
             ))}

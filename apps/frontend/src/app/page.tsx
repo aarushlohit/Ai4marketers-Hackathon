@@ -1,8 +1,18 @@
 import React from "react";
 import Link from "next/link";
 import { CreatedBySection } from "@/components/CreatedBySection";
-
-
+import {
+  Bird,
+  ShieldCheck,
+  Lock,
+  Key,
+  Brain,
+  BarChart3,
+  Zap,
+  Bot,
+  Repeat,
+  Shield,
+} from "lucide-react";
 
 export default function LandingPage() {
   return (
@@ -17,7 +27,7 @@ export default function LandingPage() {
       <nav className="relative z-10 border-b border-white/10 dark:border-white/10 border-slate-200 bg-white/5 dark:bg-white/5 bg-slate-900/5 backdrop-blur-md sticky top-0">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-2xl">🐦</span>
+            <Bird className="h-6 w-6 text-sky-500" />
             <span className="text-xl font-bold tracking-tight bg-gradient-to-r from-white to-slate-400 dark:from-white dark:to-slate-400 from-slate-900 to-slate-600 bg-clip-text text-transparent">
               Miracle Birds
             </span>
@@ -44,7 +54,7 @@ export default function LandingPage() {
         {/* Hero Section */}
         <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-semibold uppercase tracking-wider mb-8">
-            <span className="text-sm">🔒</span> Enterprise Security
+            <ShieldCheck className="h-3.5 w-3.5 text-green-400" /> Enterprise Security
           </div>
           
           <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-8 leading-tight">
@@ -76,15 +86,15 @@ export default function LandingPage() {
 
           <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-slate-400 font-medium">
             <div className="flex items-center gap-2">
-              <span className="text-lg">🔒</span> SOC 2 Compliant
+              <Lock className="h-4 w-4 text-sky-400" /> SOC 2 Compliant
             </div>
             <div className="hidden sm:block text-white/20">•</div>
             <div className="flex items-center gap-2">
-              <span className="text-lg">🛡️</span> OWASP Top 10
+              <Shield className="h-4 w-4 text-sky-400" /> OWASP Top 10
             </div>
             <div className="hidden sm:block text-white/20">•</div>
             <div className="flex items-center gap-2">
-              <span className="text-lg">🔐</span> AES-256 Encrypted
+              <Key className="h-4 w-4 text-sky-400" /> AES-256 Encrypted
             </div>
           </div>
         </section>
@@ -115,7 +125,9 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Feature 1 */}
             <div className="p-6 rounded-2xl bg-white/5 dark:bg-white/5 bg-white border border-white/10 dark:border-white/10 border-slate-200 backdrop-blur-sm hover:border-white/20 dark:hover:border-white/20 hover:border-slate-300 transition-all group">
-              <div className="text-4xl mb-4 group-hover:scale-110 transition-transform origin-left">🧠</div>
+              <div className="mb-4 group-hover:scale-110 transition-transform origin-left text-sky-400">
+                <Brain className="h-8 w-8" />
+              </div>
               <h3 className="text-xl font-bold mb-2">AI Predictions</h3>
               <p className="text-slate-400 text-sm leading-relaxed">
                 Predict churn, score leads, forecast revenue with ML.
@@ -124,7 +136,9 @@ export default function LandingPage() {
             
             {/* Feature 2 */}
             <div className="p-6 rounded-2xl bg-white/5 dark:bg-white/5 bg-white border border-white/10 dark:border-white/10 border-slate-200 backdrop-blur-sm hover:border-white/20 dark:hover:border-white/20 hover:border-slate-300 transition-all group">
-              <div className="text-4xl mb-4 group-hover:scale-110 transition-transform origin-left">📊</div>
+              <div className="mb-4 group-hover:scale-110 transition-transform origin-left text-sky-400">
+                <BarChart3 className="h-8 w-8" />
+              </div>
               <h3 className="text-xl font-bold mb-2">Customer 360</h3>
               <p className="text-slate-400 text-sm leading-relaxed">
                 Full profile: health score, deal history, activity timeline.
@@ -133,7 +147,9 @@ export default function LandingPage() {
 
             {/* Feature 3 */}
             <div className="p-6 rounded-2xl bg-white/5 dark:bg-white/5 bg-white border border-white/10 dark:border-white/10 border-slate-200 backdrop-blur-sm hover:border-white/20 dark:hover:border-white/20 hover:border-slate-300 transition-all group">
-              <div className="text-4xl mb-4 group-hover:scale-110 transition-transform origin-left">🔌</div>
+              <div className="mb-4 group-hover:scale-110 transition-transform origin-left text-sky-400">
+                <Zap className="h-8 w-8" />
+              </div>
               <h3 className="text-xl font-bold mb-2">CRM Connect</h3>
               <p className="text-slate-400 text-sm leading-relaxed">
                 Sync HubSpot, Salesforce, Zoho in one click.
@@ -142,7 +158,9 @@ export default function LandingPage() {
 
             {/* Feature 4 */}
             <div className="p-6 rounded-2xl bg-white/5 dark:bg-white/5 bg-white border border-white/10 dark:border-white/10 border-slate-200 backdrop-blur-sm hover:border-white/20 dark:hover:border-white/20 hover:border-slate-300 transition-all group">
-              <div className="text-4xl mb-4 group-hover:scale-110 transition-transform origin-left">🤖</div>
+              <div className="mb-4 group-hover:scale-110 transition-transform origin-left text-sky-400">
+                <Bot className="h-8 w-8" />
+              </div>
               <h3 className="text-xl font-bold mb-2">AI Copilot</h3>
               <p className="text-slate-400 text-sm leading-relaxed">
                 Ask questions about your CRM data in natural language.
@@ -151,7 +169,9 @@ export default function LandingPage() {
 
             {/* Feature 5 */}
             <div className="p-6 rounded-2xl bg-white/5 dark:bg-white/5 bg-white border border-white/10 dark:border-white/10 border-slate-200 backdrop-blur-sm hover:border-white/20 dark:hover:border-white/20 hover:border-slate-300 transition-all group">
-              <div className="text-4xl mb-4 group-hover:scale-110 transition-transform origin-left">🔄</div>
+              <div className="mb-4 group-hover:scale-110 transition-transform origin-left text-sky-400">
+                <Repeat className="h-8 w-8" />
+              </div>
               <h3 className="text-xl font-bold mb-2">Workflows</h3>
               <p className="text-slate-400 text-sm leading-relaxed">
                 Automate actions triggered by AI predictions.
@@ -160,7 +180,9 @@ export default function LandingPage() {
 
             {/* Feature 6 */}
             <div className="p-6 rounded-2xl bg-white/5 dark:bg-white/5 bg-white border border-white/10 dark:border-white/10 border-slate-200 backdrop-blur-sm hover:border-white/20 dark:hover:border-white/20 hover:border-slate-300 transition-all group">
-              <div className="text-4xl mb-4 group-hover:scale-110 transition-transform origin-left">🔒</div>
+              <div className="mb-4 group-hover:scale-110 transition-transform origin-left text-sky-400">
+                <ShieldCheck className="h-8 w-8" />
+              </div>
               <h3 className="text-xl font-bold mb-2">Security</h3>
               <p className="text-slate-400 text-sm leading-relaxed">
                 OWASP Top 10 compliant, E2E encrypted, audit logs.

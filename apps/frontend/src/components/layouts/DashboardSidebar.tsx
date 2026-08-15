@@ -18,6 +18,7 @@ import {
   Shield,
   Activity,
   UserCheck,
+  Bird,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -46,8 +47,8 @@ export function DashboardSidebar() {
     <aside className="flex w-64 flex-col border-r border-slate-200 bg-white dark:border-dark-border dark:bg-dark-surface">
       {/* Logo */}
       <div className="flex h-16 items-center border-b border-slate-200 dark:border-dark-border px-6">
-        <span className="text-xl font-bold text-blue-600 dark:text-dark-accent">
-          🐦 Miracle Birds
+        <span className="flex items-center text-xl font-bold text-slate-900 dark:text-white">
+          <Bird className="h-6 w-6 mr-2 text-sky-500 shrink-0" /> Miracle Birds
         </span>
       </div>
 

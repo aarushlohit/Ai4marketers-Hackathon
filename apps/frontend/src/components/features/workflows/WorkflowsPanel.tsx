@@ -14,6 +14,11 @@ import {
   Mail,
   MessageSquare,
   UserPlus,
+  AlertTriangle,
+  Activity,
+  TrendingUp,
+  Clock,
+  AlertOctagon,
 } from "lucide-react";
 import { apiClient } from "@/lib/api/client";
 
@@ -40,9 +45,9 @@ const WORKFLOW_TEMPLATES = [
     trigger: "churn_risk_high",
     actions: [
       { type: "send_email", config: { to: "{{email}}", subject: "We miss you!", body: "Dear {{name}}, we noticed your engagement has dropped..." } },
-      { type: "notify_slack", config: { channel: "#customer-success", message: "⚠️ High churn risk: {{name}}" } },
+      { type: "notify_slack", config: { channel: "#customer-success", message: "High churn risk: {{name}}" } },
     ],
-    icon: "🚨",
+    icon: AlertTriangle,
   },
   {
     name: "Health Drop Rescue",
@@ -52,7 +57,7 @@ const WORKFLOW_TEMPLATES = [
       { type: "assign_team", config: { team_id: "retention-team" } },
       { type: "send_email", config: { to: "{{email}}", subject: "How can we help?", body: "Hi {{name}}, we want to make sure you are getting value..." } },
     ],
-    icon: "🏥",
+    icon: Activity,
   },
   {
     name: "Upsell Opportunity",
@@ -62,7 +67,7 @@ const WORKFLOW_TEMPLATES = [
       { type: "assign_team", config: { team_id: "sales-team" } },
       { type: "send_email", config: { to: "{{email}}", subject: "Exclusive upgrade for you", body: "Hi {{name}}, based on your usage we think you'd love our Pro plan..." } },
     ],
-    icon: "📈",
+    icon: TrendingUp,
   },
   {
     name: "Onboarding Welcome",
@@ -71,9 +76,9 @@ const WORKFLOW_TEMPLATES = [
     actions: [
       { type: "send_email", config: { to: "{{email}}", subject: "Welcome to the platform!", body: "Hi {{name}}, welcome! Here is how to get started..." } },
       { type: "assign_team", config: { team_id: "onboarding-team" } },
-      { type: "notify_slack", config: { channel: "#onboarding", message: "🎉 New customer: {{name}}" } },
+      { type: "notify_slack", config: { channel: "#onboarding", message: "New customer: {{name}}" } },
     ],
-    icon: "🎉",
+    icon: UserPlus,
   },
   {
     name: "Renewal Reminder",
@@ -81,9 +86,9 @@ const WORKFLOW_TEMPLATES = [
     trigger: "scheduled",
     actions: [
       { type: "send_email", config: { to: "{{email}}", subject: "Your renewal is coming up", body: "Hi {{name}}, your subscription renews in 30 days..." } },
-      { type: "notify_slack", config: { channel: "#renewals", message: "📅 Renewal due: {{name}}" } },
+      { type: "notify_slack", config: { channel: "#renewals", message: "Renewal due: {{name}}" } },
     ],
-    icon: "🔄",
+    icon: Clock,
   },
   {
     name: "Support Escalation",
@@ -91,9 +96,9 @@ const WORKFLOW_TEMPLATES = [
     trigger: "health_score_drop",
     actions: [
       { type: "assign_team", config: { team_id: "senior-support" } },
-      { type: "notify_slack", config: { channel: "#escalations", message: "🔴 Critical escalation: {{name}}" } },
+      { type: "notify_slack", config: { channel: "#escalations", message: "Critical escalation: {{name}}" } },
     ],
-    icon: "🆘",
+    icon: AlertOctagon,
   },
 ] as const;
 
@@ -207,7 +212,9 @@ export function WorkflowsPanel() {
                 className="rounded-2xl border border-slate-200 bg-white p-4 space-y-3 hover:shadow-md transition-shadow dark:border-dark-border dark:bg-dark-surface hover:dark:bg-dark-bg/70"
               >
                 <div className="flex items-start gap-3">
-                  <span className="text-xl">{tpl.icon}</span>
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-sky-50 dark:bg-sky-950/30 text-sky-500 border border-sky-100 dark:border-sky-800/30">
+                    <tpl.icon className="h-5 w-5" />
+                  </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-bold text-slate-800 dark:text-white">{tpl.name}</p>
                     <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 leading-snug">{tpl.description}</p>
