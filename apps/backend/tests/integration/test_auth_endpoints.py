@@ -56,7 +56,7 @@ class TestAuthEndpoints:
 
     async def test_protected_endpoint_without_token(self, client: AsyncClient):
         r = await client.get("/api/v1/customers")
-        assert r.status_code == 403
+        assert r.status_code == 401
 
     async def test_protected_endpoint_with_token(
         self, client: AsyncClient, auth_headers

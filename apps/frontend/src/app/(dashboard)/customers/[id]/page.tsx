@@ -1,6 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import { useParams } from "next/navigation";
 import { apiClient } from "@/lib/api/client";
 import {
   Activity,
@@ -28,11 +29,8 @@ interface Customer {
   crm_source: string | null;
 }
 
-export default function Customer360Page({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default function Customer360Page() {
+  const params = useParams<{ id: string }>();
   const { data: customer, isLoading, error } = useQuery<Customer>({
     queryKey: ["customer", params.id],
     queryFn: () =>

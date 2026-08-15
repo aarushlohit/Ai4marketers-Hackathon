@@ -99,7 +99,7 @@ async def test_callback_stores_credentials_for_sync(monkeypatch):
         "consume_state",
         lambda actual_state, crm_type: {
             "crm_type": crm_type,
-            "tenant_id": "tenant-1",
+            "tenant_id": "00000000-0000-0000-0000-000000000001",
             "redirect_uri": "http://localhost:18000/api/v1/integrations/salesforce/callback",
         }
         if actual_state == state
@@ -127,10 +127,19 @@ async def test_callback_stores_credentials_for_sync(monkeypatch):
         exchange_code_for_tokens,
     )
 
-    result = await connections.oauth_callback("salesforce", "oauth-code", state)
+    class FailingDatabase:
+        async def execute(self, *_args, **_kwargs):
+            raise RuntimeError("database unavailable in unit test")
+
+        async def rollback(self):
+            return None
+
+    result = await connections.oauth_callback(
+        "salesforce", "oauth-code", state, db=FailingDatabase()
+    )
 
     stored = connections._connections[result["connection_id"]]
-    assert stored["tenant_id"] == "tenant-1"
+    assert stored["tenant_id"] == "00000000-0000-0000-0000-000000000001"
     assert stored["credentials"] == {
         "access_token": "access",
         "refresh_token": "refresh",

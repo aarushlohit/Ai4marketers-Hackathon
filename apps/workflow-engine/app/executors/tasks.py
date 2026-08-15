@@ -12,6 +12,12 @@ from app.core.database import engine
 
 logger = structlog.get_logger()
 
+def _internal_headers() -> dict[str, str]:
+    """Return the authenticated service-to-service header; never use a default secret."""
+    if not settings.INTERNAL_API_KEY:
+        raise RuntimeError("INTERNAL_API_KEY is required for backend workflow calls")
+    return {"X-Internal-API-Key": settings.INTERNAL_API_KEY}
+
 def _render_template(template: str, context: dict) -> str:
     """Simple template renderer replacing {{variable}} with context values."""
     if not isinstance(template, str):
@@ -115,14 +121,14 @@ async def execute_action_async(action: dict, context: dict) -> dict:
         async with httpx.AsyncClient() as client:
             try:
                 # Check current record
-                r = await client.get(f"http://backend:8000/api/v1/customers/{customer_id}", headers={"X-Internal-Token": "secret"})
+                r = await client.get(f"{settings.BACKEND_URL.rstrip('/')}/api/v1/customers/{customer_id}", headers=_internal_headers())
                 if r.status_code == 200:
                     rollback_data["old_team"] = r.json().get("assigned_team")
                 
                 await client.put(
-                    f"http://backend:8000/api/v1/customers/{customer_id}",
+                    f"{settings.BACKEND_URL.rstrip('/')}/api/v1/customers/{customer_id}",
                     json={"attributes": {"assigned_team": team_id}},
-                    headers={"X-Internal-Token": "secret"}
+                    headers=_internal_headers()
                 )
             except Exception as e:
                 logger.error("Failed to call backend to assign lead/team", error=str(e))
@@ -132,15 +138,15 @@ async def execute_action_async(action: dict, context: dict) -> dict:
         logger.info("Updating CRM attributes", customer_id=customer_id, attrs=attributes)
         async with httpx.AsyncClient() as client:
             try:
-                r = await client.get(f"http://backend:8000/api/v1/customers/{customer_id}", headers={"X-Internal-Token": "secret"})
+                r = await client.get(f"{settings.BACKEND_URL.rstrip('/')}/api/v1/customers/{customer_id}", headers=_internal_headers())
                 if r.status_code == 200:
                     current_attrs = r.json().get("attributes", {})
                     rollback_data["old_attributes"] = {k: current_attrs.get(k) for k in attributes.keys()}
                 
                 await client.put(
-                    f"http://backend:8000/api/v1/customers/{customer_id}",
+                    f"{settings.BACKEND_URL.rstrip('/')}/api/v1/customers/{customer_id}",
                     json={"attributes": attributes},
-                    headers={"X-Internal-Token": "secret"}
+                    headers=_internal_headers()
                 )
             except Exception as e:
                 logger.error("Failed to call backend to update CRM record", error=str(e))
@@ -157,7 +163,7 @@ async def execute_action_async(action: dict, context: dict) -> dict:
                 await client.post(
                     f"http://backend:8000/api/v1/customers/{customer_id}/interactions",
                     json={"interaction_type": "followup", "subject": "Automated Follow-up Scheduled", "body": "Next step following workflow trigger"},
-                    headers={"X-Internal-Token": "secret"}
+                    headers=_internal_headers()
                 )
             except Exception as e:
                 logger.error("Failed to create customer interaction", error=str(e))
@@ -191,18 +197,18 @@ async def rollback_actions_async(actions_run_data: list, context: dict):
                 old_team = completed_action.get("old_team", None)
                 async with httpx.AsyncClient() as client:
                     await client.put(
-                        f"http://backend:8000/api/v1/customers/{customer_id}",
+                        f"{settings.BACKEND_URL.rstrip('/')}/api/v1/customers/{customer_id}",
                         json={"attributes": {"assigned_team": old_team}},
-                        headers={"X-Internal-Token": "secret"}
+                    headers=_internal_headers()
                     )
             elif action_type == "update_crm":
                 old_attrs = completed_action.get("old_attributes", {})
                 if old_attrs:
                     async with httpx.AsyncClient() as client:
                         await client.put(
-                            f"http://backend:8000/api/v1/customers/{customer_id}",
+                            f"{settings.BACKEND_URL.rstrip('/')}/api/v1/customers/{customer_id}",
                             json={"attributes": old_attrs},
-                            headers={"X-Internal-Token": "secret"}
+                            headers=_internal_headers()
                         )
             elif action_type == "send_email" or action_type == "notify_manager":
                 logger.info("Retracting/logging notification revocation", action=action_type)

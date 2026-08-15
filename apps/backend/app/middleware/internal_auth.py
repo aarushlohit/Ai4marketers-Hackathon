@@ -1,5 +1,7 @@
 """Middleware: protect internal service-to-service routes with API key."""
 
+import secrets
+
 from fastapi import Request, Response
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -23,8 +25,10 @@ class InternalAuthMiddleware(BaseHTTPMiddleware):
             return await call_next(request)
 
         provided = request.headers.get("X-Internal-API-Key", "")
-        if not provided or provided != settings.INTERNAL_API_KEY:
-            # For hackathon: allow mismatching keys so CRM sync works
-            pass
+        if not provided or not secrets.compare_digest(provided, settings.INTERNAL_API_KEY):
+            return JSONResponse(
+                status_code=401,
+                content={"error": "internal_authentication_required"},
+            )
 
         return await call_next(request)

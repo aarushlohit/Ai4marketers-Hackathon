@@ -36,7 +36,7 @@ function Field({
 }) {
   return (
     <div>
-      <label className="mb-1.5 block text-sm font-medium text-neutral-700 dark:text-neutral-300">
+      <label className="mb-1.5 block text-sm font-medium text-slate-700">
         {label}
       </label>
       {children}
@@ -46,7 +46,7 @@ function Field({
 }
 
 const inputCls =
-  "w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm transition-colors focus:border-neutral-900 focus:outline-none focus:ring-1 focus:ring-neutral-900 dark:border-dark-border dark:bg-dark-bg dark:text-white dark:focus:border-white dark:focus:ring-white";
+  "w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 shadow-sm transition-colors placeholder:text-slate-400 focus:border-sky-500 focus:outline-none focus:ring-4 focus:ring-sky-100";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -87,47 +87,42 @@ export default function RegisterPage() {
   });
 
   return (
-    <div className="flex min-h-screen bg-white dark:bg-dark-bg">
+    <div className="min-h-screen bg-[#fbfdff] text-slate-950 lg:flex">
       {/* LEFT PANEL */}
-      <div className="hidden lg:flex w-1/2 flex-col justify-between p-12 bg-gradient-to-br from-[#0a0a0a] to-[#1a1a1a] text-white">
+      <div className="relative hidden w-1/2 flex-col justify-between overflow-hidden bg-[#f1f9ff] p-12 lg:flex">
+        <div className="pointer-events-none absolute -right-32 -top-32 h-96 w-96 rounded-full bg-sky-200/60 blur-3xl" />
         <div>
-          <div className="text-4xl font-bold mb-4 flex items-center gap-2">
-            <span>🐦</span> Miracle Birds
+          <div className="relative flex items-center gap-3 text-3xl font-semibold tracking-[-0.05em] text-slate-950">
+            <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-sky-500 text-lg font-bold text-white shadow-lg shadow-sky-200">M</span> Miracle Birds
           </div>
-          <p className="text-xl text-neutral-300 mb-12 font-medium">
-            Join Miracle Birds
+          <p className="relative mb-12 mt-5 max-w-sm text-xl font-medium leading-8 text-slate-600">
+            Build a clearer, more connected customer workflow.
           </p>
 
-          <div className="space-y-6 text-lg text-neutral-400">
+          <div className="relative space-y-6 text-base text-slate-600">
             <div className="flex items-center gap-3">
-              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/10 text-white text-sm">✓</span>
+              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white text-sky-600 text-sm shadow-sm">✓</span>
               Start turning your CRM data into revenue in minutes
             </div>
             <div className="flex items-center gap-3">
-              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/10 text-white text-sm">✓</span>
+              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white text-sky-600 text-sm shadow-sm">✓</span>
               14-day free trial · No credit card required
             </div>
           </div>
         </div>
 
-        <div className="flex gap-4 text-sm font-medium text-neutral-500">
-          <div className="flex items-center gap-1 rounded-full bg-white/5 px-3 py-1 border border-white/10">
-            🔒 SOC 2
-          </div>
-          <div className="flex items-center gap-1 rounded-full bg-white/5 px-3 py-1 border border-white/10">
-            🛡️ OWASP
-          </div>
-          <div className="flex items-center gap-1 rounded-full bg-white/5 px-3 py-1 border border-white/10">
-            🔐 AES-256
-          </div>
+        <div className="relative flex gap-3 text-xs font-semibold text-slate-500">
+          <div className="rounded-full border border-sky-200 bg-white px-3 py-1.5">SOC 2</div>
+          <div className="rounded-full border border-sky-200 bg-white px-3 py-1.5">OWASP</div>
+          <div className="rounded-full border border-sky-200 bg-white px-3 py-1.5">AES-256</div>
         </div>
       </div>
 
       {/* RIGHT PANEL */}
-      <div className="flex w-full lg:w-1/2 flex-col justify-center px-8 sm:px-16 lg:px-24 py-12 bg-white dark:bg-dark-surface dark:border-l dark:border-dark-border overflow-y-auto">
+      <div className="flex w-full flex-col justify-center overflow-y-auto px-6 py-12 sm:px-16 lg:w-1/2 lg:border-l lg:border-slate-200 lg:px-24">
         <div className="mx-auto w-full max-w-md">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-neutral-900 dark:text-white tracking-tight">
+            <h1 className="text-3xl font-semibold tracking-[-0.05em] text-slate-950">
               Create your account
             </h1>
           </div>
@@ -190,7 +185,7 @@ export default function RegisterPage() {
             </Field>
 
             {error && (
-              <p className="text-sm text-red-600 dark:text-red-400">
+              <p className="text-sm text-red-600">
                 Registration failed. Please try again.
               </p>
             )}
@@ -198,15 +193,15 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={isPending}
-              className="mt-4 w-full rounded-xl bg-black px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-neutral-800 disabled:opacity-50 dark:bg-white dark:text-black dark:hover:bg-neutral-200"
+              className="mt-4 w-full rounded-xl bg-sky-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-sky-100 transition-colors hover:bg-sky-600 disabled:opacity-50"
             >
               {isPending ? "Creating account…" : "Create account"}
             </button>
           </form>
 
-          <p className="mt-8 text-center text-sm text-neutral-600 dark:text-neutral-400">
+          <p className="mt-8 text-center text-sm text-slate-500">
             Already have an account?{" "}
-            <Link href="/login" className="font-semibold text-black hover:underline dark:text-white">
+            <Link href="/login" className="font-semibold text-sky-600 hover:text-sky-700 hover:underline">
               Sign in
             </Link>
           </p>

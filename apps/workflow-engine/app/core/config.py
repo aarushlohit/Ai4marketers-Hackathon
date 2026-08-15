@@ -8,6 +8,8 @@ class WorkflowEngineSettings(BaseSettings):
     ENVIRONMENT: str = "development"
     DATABASE_URL: str = "postgresql+asyncpg://miracle_birds_user:ashlin@localhost:5432/miracle_birds"
     REDIS_URL: str = "redis://:change-this-password@localhost:6379/0"
+    BACKEND_URL: str = "http://backend:8000"
+    INTERNAL_API_KEY: str = ""
     
     # Celery settings
     CELERY_BROKER_URL: str = "redis://:change-this-password@localhost:6379/0"

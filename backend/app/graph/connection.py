@@ -1,9 +1,11 @@
+import os
+
 from neo4j import GraphDatabase
 
 # Neo4j connection string placeholder
-NEO4J_URI = "neo4j://localhost:7687"
-NEO4J_USER = "neo4j"
-NEO4J_PASSWORD = "password"
+NEO4J_URI = os.getenv("NEO4J_URI", "neo4j://localhost:7687")
+NEO4J_USER = os.getenv("NEO4J_USER", "neo4j")
+NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD", "")
 
 
 class Neo4jConnection:
@@ -12,6 +14,8 @@ class Neo4jConnection:
         self.__user = user
         self.__pwd = pwd
         self.__driver = None
+        if not pwd:
+            return
         try:
             self.__driver = GraphDatabase.driver(
                 self.__uri, auth=(self.__user, self.__pwd)
