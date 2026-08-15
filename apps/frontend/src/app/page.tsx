@@ -1,7 +1,82 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { Layers } from "lucide-react";
+
+
+const TEAM_MEMBERS = ["Ashlin Mirsha RK", "Lohit A", "Benesha Mercy Ramesh RA"];
+
+function CreatedBySection() {
+  const [index, setIndex] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    const maxLen = Math.max(...TEAM_MEMBERS.map((m) => m.length));
+
+    const timeout = setTimeout(() => {
+      if (!isDeleting) {
+        if (index < maxLen) {
+          setIndex((prev) => prev + 1);
+        } else {
+          // Pause at full text
+          setTimeout(() => setIsDeleting(true), 2500);
+        }
+      } else {
+        if (index > 0) {
+          setIndex((prev) => prev - 1);
+        } else {
+          setIsDeleting(false);
+        }
+      }
+    }, isDeleting ? 40 : 80);
+
+    return () => clearTimeout(timeout);
+  }, [index, isDeleting]);
+
+  return (
+    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-[#f0f7ff] dark:bg-[#0d172a] text-center border-t border-b border-sky-100/60 dark:border-slate-800 transition-colors duration-300">
+      <div className="max-w-4xl mx-auto flex flex-col items-center">
+        {/* Stack Icon */}
+        <div className="w-12 h-12 rounded-2xl bg-white dark:bg-slate-900 border border-sky-100 dark:border-slate-800 shadow-sm flex items-center justify-center mb-6 text-sky-500">
+          <Layers className="w-6 h-6" />
+        </div>
+
+        {/* Built with Purpose Label */}
+        <p className="text-xs font-extrabold uppercase tracking-widest text-sky-500 mb-3">
+          Built with purpose
+        </p>
+
+        {/* Main Heading */}
+        <h2 className="text-4xl sm:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-4">
+          Created by Miracle Birds.
+        </h2>
+
+        {/* Subtitle */}
+        <p className="text-slate-600 dark:text-slate-300 text-base sm:text-lg max-w-2xl font-medium leading-relaxed mb-8">
+          A focused team building a more human, useful intelligence layer for the people who care about customer relationships.
+        </p>
+
+        {/* Team Member Badges with Simultaneous Typewriter */}
+        <div className="flex flex-wrap items-center justify-center gap-4">
+          {TEAM_MEMBERS.map((name) => {
+            const currentText = name.slice(0, index);
+            return (
+              <div
+                key={name}
+                className="px-6 py-3 rounded-full bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-slate-800 dark:text-slate-100 font-semibold text-sm sm:text-base shadow-sm flex items-center justify-center gap-1 min-w-[150px] transition-all hover:shadow-md hover:border-sky-300"
+              >
+                <span>{currentText}</span>
+                <span className="w-0.5 h-4 bg-sky-500 animate-pulse inline-block" />
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 
 export default function LandingPage() {
   return (
@@ -167,6 +242,9 @@ export default function LandingPage() {
             </div>
           </div>
         </section>
+
+        {/* Created by Miracle Birds Section with Simultaneous Typewriter */}
+        <CreatedBySection />
 
         {/* CTA Footer */}
         <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
