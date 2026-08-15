@@ -8,31 +8,41 @@ import { Layers } from "lucide-react";
 const TEAM_MEMBERS = ["Ashlin Mirsha RK", "Lohit A", "Benesha Mercy Ramesh RA"];
 
 function CreatedBySection() {
-  const [index, setIndex] = useState(0);
+  const [charIndex, setCharIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
     const maxLen = Math.max(...TEAM_MEMBERS.map((m) => m.length));
 
-    const timeout = setTimeout(() => {
-      if (!isDeleting) {
-        if (index < maxLen) {
-          setIndex((prev) => prev + 1);
-        } else {
-          // Pause at full text
-          setTimeout(() => setIsDeleting(true), 2500);
-        }
-      } else {
-        if (index > 0) {
-          setIndex((prev) => prev - 1);
-        } else {
-          setIsDeleting(false);
-        }
-      }
-    }, isDeleting ? 40 : 80);
+    if (isPaused) {
+      const pauseTimer = setTimeout(() => {
+        setIsPaused(false);
+        setIsDeleting(true);
+      }, 2500);
+      return () => clearTimeout(pauseTimer);
+    }
 
-    return () => clearTimeout(timeout);
-  }, [index, isDeleting]);
+    const timer = setInterval(() => {
+      setCharIndex((prev) => {
+        if (!isDeleting) {
+          if (prev >= maxLen) {
+            setIsPaused(true);
+            return maxLen;
+          }
+          return prev + 1;
+        } else {
+          if (prev <= 0) {
+            setIsDeleting(false);
+            return 0;
+          }
+          return prev - 1;
+        }
+      });
+    }, isDeleting ? 40 : 90);
+
+    return () => clearInterval(timer);
+  }, [isDeleting, isPaused]);
 
   return (
     <section className="py-20 px-4 sm:px-6 lg:px-8 bg-[#f0f7ff] dark:bg-[#0d172a] text-center border-t border-b border-sky-100/60 dark:border-slate-800 transition-colors duration-300">
@@ -60,14 +70,14 @@ function CreatedBySection() {
         {/* Team Member Badges with Simultaneous Typewriter */}
         <div className="flex flex-wrap items-center justify-center gap-4">
           {TEAM_MEMBERS.map((name) => {
-            const currentText = name.slice(0, index);
+            const currentText = name.slice(0, charIndex);
             return (
               <div
                 key={name}
-                className="px-6 py-3 rounded-full bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-slate-800 dark:text-slate-100 font-semibold text-sm sm:text-base shadow-sm flex items-center justify-center gap-1 min-w-[150px] transition-all hover:shadow-md hover:border-sky-300"
+                className="px-6 py-3 rounded-full bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-slate-800 dark:text-slate-100 font-semibold text-sm sm:text-base shadow-sm flex items-center justify-center min-h-[48px] transition-all hover:shadow-md hover:border-sky-300"
               >
                 <span>{currentText}</span>
-                <span className="w-0.5 h-4 bg-sky-500 animate-pulse inline-block" />
+                <span className="w-0.5 h-4 bg-sky-500 animate-pulse inline-block ml-0.5" />
               </div>
             );
           })}
@@ -76,6 +86,7 @@ function CreatedBySection() {
     </section>
   );
 }
+
 
 
 export default function LandingPage() {
