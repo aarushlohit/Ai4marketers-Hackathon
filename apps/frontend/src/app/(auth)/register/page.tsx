@@ -89,7 +89,7 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen bg-[#fbfdff] text-slate-950 lg:flex">
       {/* LEFT PANEL */}
-      <div className="relative hidden w-1/2 flex-col justify-between overflow-hidden bg-[#f1f9ff] p-12 lg:flex">
+      <div className="relative hidden w-1/2 flex-col justify-between overflow-hidden bg-sky-100 p-12 lg:flex">
         <div className="pointer-events-none absolute -right-32 -top-32 h-96 w-96 rounded-full bg-sky-200/60 blur-3xl" />
         <div>
           <div className="relative flex items-center gap-3 text-3xl font-semibold tracking-[-0.05em] text-slate-950">
