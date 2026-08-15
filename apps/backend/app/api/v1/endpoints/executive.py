@@ -4,7 +4,7 @@ from typing import Annotated
 
 import httpx
 from fastapi import APIRouter, Depends
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -24,7 +24,7 @@ router = APIRouter()
 
 
 class QuestionRequest(BaseModel):
-    question: str
+    question: str = Field(..., min_length=2, max_length=500)
 
 
 @router.get("/briefing")
