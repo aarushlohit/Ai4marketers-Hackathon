@@ -92,7 +92,9 @@ Set these values in the deployment provider's secret manager before enabling pro
 | `TRUSTED_HOSTS` | Comma-separated approved hostnames |
 | `DATABASE_URL` | Managed PostgreSQL connection |
 | `REDIS_URL` | Managed Redis connection |
-| `OPENAI_API_KEY` or `GEMINI_API_KEY` | Selected AI provider credential |
+| `OPENCODE_API_KEY` | OpenCode Zen API credential for Executive AI and CRM Copilot |
+| `OPENCODE_MODEL` | OpenCode model ID; defaults to `deepseek-v4-flash-free` |
+| `OPENCODE_API_URL` | OpenAI-compatible endpoint; defaults to `https://opencode.ai/zen/v1/chat/completions` |
 | CRM OAuth variables | Provider-specific client IDs, secrets, and redirect settings |
 | `NEO4J_URI`, `NEO4J_USER`, `NEO4J_PASSWORD` | Optional knowledge graph connection |
 

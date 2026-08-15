@@ -16,9 +16,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.customer import CustomerModel
 from app.models.recommendation import RecommendationModel
+from app.core.config import settings
 
-OPENCODE_API_URL = "https://opencode.ai/zen/v1/chat/completions"
-FREE_MODEL = "deepseek-v4-flash-free"
+OPENCODE_API_URL = settings.OPENCODE_API_URL
+FREE_MODEL = settings.OPENCODE_MODEL
 
 # ── CRM Guardrails ─────────────────────────────────────────────────────
 # Topics explicitly allowed (CRM / business domain)
@@ -260,6 +261,9 @@ async def call_llm(
         "Content-Type": "application/json",
         "User-Agent": "MiracleBirds/1.0",
     }
+    api_key = settings.OPENCODE_API_KEY or settings.OPENAI_API_KEY
+    if api_key:
+        headers["Authorization"] = f"Bearer {api_key}"
     # Keep the executive UI responsive. The deterministic CRM fallback is
     # returned when the external model is slow or unavailable.
     async with httpx.AsyncClient(timeout=12.0) as client:
