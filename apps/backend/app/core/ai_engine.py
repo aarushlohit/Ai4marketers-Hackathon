@@ -248,15 +248,6 @@ async def call_llm(
     Call DeepSeek V4 Flash Free via opencode.ai.
     If the API fails, calls fallback_fn(user_message) if provided.
     """
-    payload = {
-        "model": model or FREE_MODEL,
-        "messages": [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_message},
-        ],
-        "max_tokens": max_tokens,
-        "temperature": temperature,
-    }
     headers = {
         "Content-Type": "application/json",
         "User-Agent": "MiracleBirds/1.0",
@@ -266,19 +257,36 @@ async def call_llm(
         headers["Authorization"] = f"Bearer {api_key}"
     # Keep the executive UI responsive. The deterministic CRM fallback is
     # returned when the external model is slow or unavailable.
+    requested_model = model or FREE_MODEL
+    fallback_models = [
+        item.strip()
+        for item in settings.OPENCODE_FALLBACK_MODELS.split(",")
+        if item.strip() and item.strip() != requested_model
+    ]
+    models_to_try = [requested_model, *fallback_models]
     async with httpx.AsyncClient(timeout=12.0) as client:
-        try:
-            r = await client.post(OPENCODE_API_URL, json=payload, headers=headers)
-            r.raise_for_status()
-            data = r.json()
-            msg_obj = data["choices"][0]["message"]
-            content = (msg_obj.get("content") or "").strip()
-            if not content:
-                content = (msg_obj.get("reasoning_content") or "").strip()
-            if content:
-                return content
-        except Exception as e:
-            print(f"[AI Engine] LLM call failed: {e}")
+        for candidate_model in models_to_try:
+            payload = {
+                "model": candidate_model,
+                "messages": [
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_message},
+                ],
+                "max_tokens": max_tokens,
+                "temperature": temperature,
+            }
+            try:
+                r = await client.post(OPENCODE_API_URL, json=payload, headers=headers)
+                r.raise_for_status()
+                data = r.json()
+                msg_obj = data["choices"][0]["message"]
+                content = (msg_obj.get("content") or "").strip()
+                if not content:
+                    content = (msg_obj.get("reasoning_content") or "").strip()
+                if content:
+                    return content
+            except Exception as e:
+                print(f"[AI Engine] Model {candidate_model} failed: {e}")
 
     if fallback_fn:
         return fallback_fn(user_message)

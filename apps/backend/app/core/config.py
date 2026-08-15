@@ -54,6 +54,7 @@ class Settings(BaseSettings):
     OPENAI_MODEL: str = "gpt-4-turbo"
     OPENCODE_API_KEY: str = ""
     OPENCODE_MODEL: str = "deepseek-v4-flash-free"
+    OPENCODE_FALLBACK_MODELS: str = "big-pickle,mimo-v2.5-free,hy3-free,laguna-s-2.1-free,nemotron-3-ultra-free,nemotron-3.5-lightning-free"
     OPENCODE_API_URL: str = "https://opencode.ai/zen/v1/chat/completions"
     GEMINI_API_KEY: str = ""
     LLM_PROVIDER: str = "openai"
