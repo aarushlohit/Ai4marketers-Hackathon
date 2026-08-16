@@ -9,7 +9,7 @@ import { UserAvatar } from "@/components/ui/user-avatar";
 
 import { Shield, CheckCircle } from "lucide-react";
 
-const tabs = ["Profile", "Security", "Notifications"] as const;
+const tabs = ["Profile", "Security", "Notifications", "Data Management"] as const;
 type Tab = (typeof tabs)[number];
 
 export function SettingsPanel() {
@@ -270,6 +270,31 @@ export function SettingsPanel() {
                 />
               </label>
             ))}
+          </div>
+        )}
+
+        {activeTab === "Data Management" && (
+          <div className="max-w-md space-y-6">
+            <div>
+              <p className="text-sm text-slate-500 dark:text-dark-muted mb-4">
+                Permanently delete all CRM data, predictions, workflows, and analytics from your workspace. This action cannot be undone.
+              </p>
+              <button 
+                onClick={async () => {
+                  if (confirm("Are you sure you want to delete all workspace data? This is irreversible.")) {
+                    try {
+                      await apiClient.delete("/users/me/data");
+                      alert("Workspace data has been reset successfully. Please refresh the dashboard.");
+                    } catch (err: any) {
+                      alert("Failed to reset data: " + err.message);
+                    }
+                  }
+                }}
+                className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700 transition"
+              >
+                Reset Workspace Data
+              </button>
+            </div>
           </div>
         )}
       </div>

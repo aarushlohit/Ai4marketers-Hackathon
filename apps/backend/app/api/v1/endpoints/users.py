@@ -54,3 +54,23 @@ async def update_me(
         await db.commit()
         await db.refresh(db_user)
     return {"message": "Profile updated"}
+
+
+@router.delete("/me/data")
+async def reset_tenant_data(
+    user: Annotated[CurrentUser, Depends(get_current_user)],
+    db: Annotated[AsyncSession, Depends(get_db)],
+):
+    """Delete all workspace data (customers, recommendations, workflows, meetings, feedback) for the tenant."""
+    from sqlalchemy import text
+    tid = str(user.tenant_id)
+    
+    # Delete in order to respect any potential foreign keys (if they existed, though typically tenant_id handles isolation)
+    await db.execute(text("DELETE FROM intelligence.recommendations WHERE tenant_id = :tid"), {"tid": tid})
+    await db.execute(text("DELETE FROM intelligence.feedback_logs WHERE tenant_id = :tid"), {"tid": tid})
+    await db.execute(text("DELETE FROM communication.meeting_summaries WHERE tenant_id = :tid"), {"tid": tid})
+    await db.execute(text("DELETE FROM automation.workflows WHERE tenant_id = :tid"), {"tid": tid})
+    await db.execute(text("DELETE FROM customers.customers WHERE tenant_id = :tid"), {"tid": tid})
+    
+    await db.commit()
+    return {"message": "Workspace data has been successfully reset."}
