@@ -62,15 +62,21 @@ async def reset_tenant_data(
     db: Annotated[AsyncSession, Depends(get_db)],
 ):
     """Delete all workspace data (customers, recommendations, workflows, meetings, feedback) for the tenant."""
-    from sqlalchemy import text
-    tid = str(user.tenant_id)
+    from sqlalchemy import delete
+    from app.models.recommendation import RecommendationModel
+    from app.models.feedback import FeedbackModel
+    from app.models.meeting import MeetingSummaryModel
+    from app.models.workflow import WorkflowModel
+    from app.models.customer import CustomerModel
+    
+    tid = user.tenant_id
     
     # Delete in order to respect any potential foreign keys
-    await db.execute(text("DELETE FROM ai.recommendations WHERE tenant_id = :tid"), {"tid": tid})
-    await db.execute(text("DELETE FROM ai.feedback_logs WHERE tenant_id = :tid"), {"tid": tid})
-    await db.execute(text("DELETE FROM ai.meeting_summaries WHERE tenant_id = :tid"), {"tid": tid})
-    await db.execute(text("DELETE FROM workflows.workflows WHERE tenant_id = :tid"), {"tid": tid})
-    await db.execute(text("DELETE FROM customers.customers WHERE tenant_id = :tid"), {"tid": tid})
+    await db.execute(delete(RecommendationModel).where(RecommendationModel.tenant_id == tid))
+    await db.execute(delete(FeedbackModel).where(FeedbackModel.tenant_id == tid))
+    await db.execute(delete(MeetingSummaryModel).where(MeetingSummaryModel.tenant_id == tid))
+    await db.execute(delete(WorkflowModel).where(WorkflowModel.tenant_id == tid))
+    await db.execute(delete(CustomerModel).where(CustomerModel.tenant_id == tid))
     
     await db.commit()
     return {"message": "Workspace data has been successfully reset."}
