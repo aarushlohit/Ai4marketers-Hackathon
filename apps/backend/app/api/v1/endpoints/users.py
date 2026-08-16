@@ -65,11 +65,11 @@ async def reset_tenant_data(
     from sqlalchemy import text
     tid = str(user.tenant_id)
     
-    # Delete in order to respect any potential foreign keys (if they existed, though typically tenant_id handles isolation)
-    await db.execute(text("DELETE FROM intelligence.recommendations WHERE tenant_id = :tid"), {"tid": tid})
-    await db.execute(text("DELETE FROM intelligence.feedback_logs WHERE tenant_id = :tid"), {"tid": tid})
-    await db.execute(text("DELETE FROM communication.meeting_summaries WHERE tenant_id = :tid"), {"tid": tid})
-    await db.execute(text("DELETE FROM automation.workflows WHERE tenant_id = :tid"), {"tid": tid})
+    # Delete in order to respect any potential foreign keys
+    await db.execute(text("DELETE FROM ai.recommendations WHERE tenant_id = :tid"), {"tid": tid})
+    await db.execute(text("DELETE FROM ai.feedback_logs WHERE tenant_id = :tid"), {"tid": tid})
+    await db.execute(text("DELETE FROM ai.meeting_summaries WHERE tenant_id = :tid"), {"tid": tid})
+    await db.execute(text("DELETE FROM workflows.workflows WHERE tenant_id = :tid"), {"tid": tid})
     await db.execute(text("DELETE FROM customers.customers WHERE tenant_id = :tid"), {"tid": tid})
     
     await db.commit()
