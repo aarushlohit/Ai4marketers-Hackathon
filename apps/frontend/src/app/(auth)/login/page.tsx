@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import axios from "axios";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -18,6 +19,24 @@ const loginSchema = z.object({
 
 type LoginForm = z.infer<typeof loginSchema>;
 
+function shouldRetryLogin(error: unknown, failureCount: number): boolean {
+  if (failureCount >= 2 || !axios.isAxiosError(error)) return false;
+  const status = error.response?.status;
+  return !status || status >= 500;
+}
+
+function loginErrorMessage(error: unknown): string {
+  if (axios.isAxiosError(error)) {
+    const status = error.response?.status;
+    if (status === 401) return "Invalid email or password. Please try again.";
+    if (status === 422) return "Enter a valid email and password.";
+    if (!status || status >= 500) {
+      return "The authentication service is waking up. Please try again in a moment.";
+    }
+  }
+  return "Unable to sign in right now. Please try again.";
+}
+
 export default function LoginPage() {
   const router = useRouter();
   const { setTokens, setUser } = useAuthStore();
@@ -31,7 +50,14 @@ export default function LoginPage() {
 
   const { mutate, isPending, error } = useMutation({
     mutationFn: (data: LoginForm) =>
-      apiClient.post("/auth/login", data).then((r) => r.data),
+      apiClient
+        .post("/auth/login", {
+          ...data,
+          email: data.email.trim().toLowerCase(),
+        })
+        .then((r) => r.data),
+    retry: shouldRetryLogin,
+    retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 3000),
     onSuccess: async (data) => {
       if (data.mfa_required) {
         setMfaRequired(true);
@@ -161,7 +187,7 @@ export default function LoginPage() {
 
             {error && (
               <p className="text-sm text-red-600 dark:text-red-400">
-                Invalid email or password. Please try again.
+                {loginErrorMessage(error)}
               </p>
             )}
 
